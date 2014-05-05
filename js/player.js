@@ -1,16 +1,28 @@
 function Player(sprite, game){
+  
   this.refGame = game;
+  
   this.parameters = this.refGame.parameters.player;
+  
   this.score = 0;
 
+  //SPRITE\\
   this.sprite = sprite;
+  
   this.sprite.animations.add('run', ['sprite1', 'sprite2', 'sprite3', 'sprite4', 'sprite5', 'sprite6', 'sprite7', 'sprite8', 'sprite9']);
   this.sprite.animations.play('run',this.parameters.animations.frameRate.run||15,true);
+  
   this.sprite.scale.x = 0.5;
   this.sprite.scale.y = 0.5;
+  
   this.sprite.x = 1000;
+  
   this.sprite.body.gravity.y = this.parameters.gravity;
+  
   this.sprite.outOfBoundsKill = true;
+  
+
+
   //FURY
   this.fury = {
     parameters:this.parameters.fury,
@@ -18,22 +30,30 @@ function Player(sprite, game){
     activated: false,
     chain: [],
   };
+
+
   //AUDIO
   this.audio = {
     jump1: this.refGame.add.audio('jump1'),
     jump2: this.refGame.add.audio('jump2'),
   };
-  //
+
+
+  //JUMP
   this.jump = {
     parameters:this.parameters.jump,
     mouseReleased:this.parameters.jump.mouseReleased,
     amount:this.parameters.jump.amount,
   };
+
+
   //DASH
   this.dash = false;
   this.dashTime = 0;
   this.canDash = true;
   this.timeBeforeCanDash = 0;
+
+
   //AURA
   this.aura = this.refGame.add.sprite(410,90,'aura');
   this.aura.animations.add('walk');
@@ -42,21 +62,27 @@ function Player(sprite, game){
   this.aura.alpha = 0.4;
   this.aura.animations.play('walk', 10, true)
   this.refGame.add.tween(this.aura).to({ x: this.refGame.width }, 10000, Phaser.Easing.Linear.None, true);
+
+
   //Particles
   this.emitterParticles = this.refGame.add.emitter(this.refGame.camera.x+20, 200, 200);
   this.emitterParticles.makeParticles('star');
   this.emitterParticles.start(false, 1000,0.1);
+
 };
 Player.prototype.constructor = Player
 /***********************************************
 Fonction a éxécuter a 60FPS
 ***********************************************/
 Player.prototype.update = function update(direction){
+  
   if(this.sprite.y < 0){
     this.sprite.body.velocity.y = -this.sprite.body.velocity.y;
     //RUSTINE By Timoté Guyot A l'AiZE
     this.sprite.y = 10;
   }
+
+
   //PARTICLES
   if(this.dash){
     this.emitterParticles.x = this.sprite.x + this.sprite.width/2;
@@ -66,6 +92,11 @@ Player.prototype.update = function update(direction){
     this.emitterParticles.x = 0;
     this.emitterParticles.y = 0;
   }
+
+
+  /*****************************
+    ROUTINE
+  *****************************/
   this.checkCollisionGround();
   this.checkJump(direction);
   this.checkReleasedInput();
@@ -130,9 +161,11 @@ Player.prototype.checkInput = function checkInput(input,where){
 Ajustement camera
 *****************************/
 Player.prototype.adjust = function(){
+  //SPRITE TROP A GAUCHE
   if(this.sprite.x < this.refGame.camera.x + 100){
     this.sprite.body.velocity.x = this.parameters.adjust.right*this.refGame.speed;
   }
+  //SPRITE TROP A DROITE
   else if(this.sprite.x > this.refGame.camera.x + 200){
     this.sprite.body.velocity.x = this.parameters.adjust.left*this.refGame.speed;
   }
@@ -155,19 +188,30 @@ Player.prototype.updateFury = function(){
   else{
     this.fury.amount-=this.fury.parameters.amountLosedPerFrame;
     if(this.fury.amount <= 0){
+
+      var that = this;
+
       this.fury.activated = false;
+      
+      //PLAY PLAYER ANIMATION
       this.sprite.animations.stop();
       this.sprite.animations.play('run',this.parameters.animations.frameRate.run,true);
-      var that = this;
+      
+      //PLAY COINS ANIMATIONS
       this.refGame.coins.forEach(function(coin){
         coin.animations.stop();
         coin.animations.play('turn',that.refGame.parameters.coins.animations.turn.frameRate,true);
       });
+      
+      //PLAY ENEMIES ANIMATIONS
       this.refGame.enemies.forEach(function(enemy){
         enemy.animations.stop();
         enemy.animations.play('lol',that.refGame.parameters.enemies.animations.idle.frameRate,true);
       });
+      
+      //GAME SPEED
       this.refGame.speed = 1;
+      //GRAVITY
       this.sprite.body.gravity.y = this.parameters.gravity;
     }
   }
@@ -316,76 +360,3 @@ Player.prototype.dashing = function(dir){
     }
   }
 };
-/*
-OLD VAR
-this.velocityToAddX= [350,300,50,1500] //tableau des differentes vitesses de player
-                                         // [0] vitesse de reajutement vers l'avant,[1] la vitesse normal
-  this.velocityToAdd = 0;
-this.jump_LEVEL_1 = -350;
-  this.jump_LEVEL_2 = -400;
-  this.jump_LEVEL_3 = -450;
-  this.jump_LEVEL_4 = -500;
-this.doubleJumpIsUp = false;//cette variable pour charger le double jump quand on relache le click en l'air
-  this.doubleJump = false;//cette variable pour double sauter
-  this.VELOCITY_PER_JUMP = -100;
-  this.VELOCITY_PER_JUMP_MAX = -500;
-  this.velocityAdded = 0;
-//OLD
-Player.prototype.jumpLevel = function(game, jumpLevel, maxClickDuration){ 
-  if(game.input.mousePointer.duration > maxClickDuration){
-      //ON APPLIQUE SAUT LEVEL 3
-      this.velocityToAdd = jumpLevel;
-      this.jump.amount--;
-  }
-};
-//OLD
-Player.prototype.jumping = function(game,dir){
-  if(this.sprite.body.touching.down){
-    if(game.input.mousePointer2.isUp){  
-      this.jump.mouseReleased = true;    //la touche est relaché quand le player est au sol, il peut (re)sauter
-    }
-    this.jump.amount = 2;//le Player peut maintenent sauter deux fois  
-    this.doubleJump = false;// Le double jump n'est pas encore activé au sol
-    this.doubleJumpIsUp = false;//Le double jump n'est pas encore activé
-  }
-  if(this.jump.amount == 2 && dir && this.jump.mouseReleased){
-    if(dir.direction.up && dir.height < -50){
-        if(game.input.mousePointer2.duration >= 120){
-      //APPLICATION DE SAUT LEVEL 4 A PLAYER
-      //IL A SAUTER UNE FOIS
-        this.velocityToAdd = this.jump_LEVEL_4;
-        this.sprite.body.velocity.y = this.velocityToAdd;
-        this.velocityToAdd = 0;
-        this.doubleJump = true;//on active le double jump apres le premier saut
-        this.jump.mouseReleased = false;//on desactive le premier saut (il faut relacher la souris et etre au sol pour le reactiver)
-        this.jump.amount--;//le joueur peut faire encore un saut
-      }
-      else if(game.input.mousePointer2.duration < 120){
-        this.jumpLevel(game,this.jump_LEVEL_3,90);
-        this.jumpLevel(game,this.jump_LEVEL_2,60);
-        this.jumpLevel(game,this.jump_LEVEL_1,30);
-      }
-    }
-  }
-  else if (this.velocityToAdd != 0){
-    this.sprite.body.velocity.y = this.velocityToAdd;
-    this.velocityToAdd = 0;
-    this.doubleJump = true;
-    this.jump.mouseReleased = false;
-    this.jump.amount--;
-  }
-};
-//OLD
-Player.prototype.doubleJumping = function(game, dir){
-  if(game.input.mousePointer2.isUp&&this.doubleJump){ //une fois en l'air si player relache le click le double saut s'active;
-    this.doubleJumpIsUp = true;                        
-  }
-  if(dir){
-    if(dir.direction.up && dir.height < -50 && this.doubleJumpIsUp && this.jump.amount == 1){ //en l'air, si le double saut est activé et le click enfoncé   
-      this.velocityToAdd = this.jump_LEVEL_1;
-      this.jump.amount = 0;
-      this.doubleJumpIsUp = false;
-      this.doubleJump = false;
-    }
-  }
-};*/

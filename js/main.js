@@ -1,5 +1,7 @@
 window.onload = function() {
     var game = new Phaser.Game(800, 600, Phaser.AUTO, '');
+
+
     /**********************************
     STATE RUN
     **********************************/
@@ -34,55 +36,13 @@ window.onload = function() {
         },
         //CREATE
         create: function(){
-            var that = this;
-
-            this.game.parameters = JSON.parse(this.game.cache.getText("parameters"));
-            readJson(this.game.parameters);
-            this.game.frameDuration = 1;
-            //MUSIC
+            
             this.game.speed = 1;
-            //STATES
+            
+            this.game.frameDuration = 1;
+            
             this.game.state.states.run.state = "RUNNER";
-            //PARALLAX
-            this.game.parallax = {
-                refGame: this.game,
-                spriteArray: [this.game.add.sprite(1000,0,'sky'),this.game.add.sprite(1800,0,'sky')],
-                update: function(){
-                    if(this.spriteArray[0].x+this.spriteArray[0].width <= this.refGame.camera.x){
-                        this.replace(this.spriteArray[0],{x:this.spriteArray[1].x+this.spriteArray[1].width,y:0})
-                    }
-                    if(this.spriteArray[1].x+this.spriteArray[1].width <= this.refGame.camera.x){
-                        this.replace(this.spriteArray[1],{x:this.spriteArray[0].x+this.spriteArray[0].width,y:0})
-                    }
-                },
-                replace: function(sprite,place){
-                    sprite.x = place.x;
-                    sprite.y = place.y;
-                },
-            };
-            //TIMER
-            this.game.framer = {
-                currentFrame:0,
-                limit:-1,
-                reached:false,
-                resetFrame:    function(){this.currentFrame = 0;},
-                setLimit:      function(limit){limit = limit || -1; this.limit = limit|0;},
-                update:        function(){this.currentFrame++;},
-                check:         function(){if(this.currentFrame>=this.limit){this.reached=true}},
-            };
-            //PARAMETERS
-            this.game.player = new Player(this.game.add.sprite(0,300,'player'),this.game);
-            //HUD
-            this.game.hud = new Hud(this.game);
-            //CAMERA
-            this.game.camera.bounds = null;
-            this.game.camera.x = this.game.player.sprite.x;
-            this.game.camera.speed = this.game.parameters.camera.speed.normal;
-            //OBSTACLES/LEVEL
-            this.game.obstacles = this.game.add.group();
-            this.game.enemies = this.game.add.group();
-            this.game.coins = this.game.add.group();
-            this.game.level = new ManagerPattern(this.game);
+
             //Curseur custom permettant de récupérer des directions et tout les bails
             this.game.input.mousePointer2 = this.game.input.mousePointer;
             //Positions De la frame d'avant
@@ -94,7 +54,7 @@ window.onload = function() {
             //L'écart nécéssaire pour considérer le curseur comme ayant changé de direction
             this.game.input.mousePointer2.MARGE_X = 3;
             this.game.input.mousePointer2.MARGE_Y = 3;
-            //
+
             window.onkeydown = function(e){
                 if(that.game.player.fury.amount == that.game.player.fury.parameters.amountMax && !that.game.player.dash){
                     that.game.player.fury.activated = true;
@@ -117,14 +77,78 @@ window.onload = function() {
                     }
                 }
             };
-            this.game.lol = this.game.width;
+
+            var that = this;
+            
+            this.game.parameters = JSON.parse(this.game.cache.getText("parameters"));
+            readJson(this.game.parameters);
+        
+            
+
+            //PARALLAX
+            this.game.parallax = {
+                refGame: this.game,
+                spriteArray: [this.game.add.sprite(1000,0,'sky'),this.game.add.sprite(1800,0,'sky')],
+                update: function(){
+                    if(this.spriteArray[0].x+this.spriteArray[0].width <= this.refGame.camera.x){
+                        this.replace(this.spriteArray[0],{x:this.spriteArray[1].x+this.spriteArray[1].width,y:0})
+                    }
+                    if(this.spriteArray[1].x+this.spriteArray[1].width <= this.refGame.camera.x){
+                        this.replace(this.spriteArray[1],{x:this.spriteArray[0].x+this.spriteArray[0].width,y:0})
+                    }
+                },
+                replace: function(sprite,place){
+                    sprite.x = place.x;
+                    sprite.y = place.y;
+                },
+            };
+            
+
+
+            //TIMER
+            this.game.framer = {
+                currentFrame:0,
+                limit:-1,
+                reached:false,
+                resetFrame:    function(){this.currentFrame = 0;},
+                setLimit:      function(limit){limit = limit || -1; this.limit = limit|0;},
+                update:        function(){this.currentFrame++;},
+                check:         function(){if(this.currentFrame>=this.limit){this.reached=true}},
+            };
+            
+
+            //PLAYER
+            this.game.player = new Player(this.game.add.sprite(0,300,'player'),this.game);
+            
+            //HUD
+            this.game.hud = new Hud(this.game);
+            
+            //CAMERA
+            this.game.camera.bounds = null;
+            this.game.camera.x = this.game.player.sprite.x;
+            this.game.camera.speed = this.game.parameters.camera.speed.normal;
+            
+            //OBSTACLES/LEVEL
+            this.game.obstacles = this.game.add.group();
+            this.game.enemies = this.game.add.group();
+            this.game.coins = this.game.add.group();
+
+            this.game.level = new ManagerPattern(this.game);
+            
             //DONE
             console.log("CREATE RUN DONE");
         },
         //UPDATE
         update: function(){
+
+            this.game.framer.update();
+            this.game.framer.check();
+
             this.game.parallax.update();
+            this.game.hud.update();
+            
             var direction = whatHappenedWithYourMouse(this.game);
+            
             /********************************
                 DEBUG SLASH
             ********************************/
@@ -134,21 +158,32 @@ window.onload = function() {
                 this.game.renderDebugC.kill();
             }
 
-            this.game.framer.check();
 
+            /*********************************
+                PHYSIC
+            *********************************/
             this.game.physics.collide(this.game.player.sprite, this.game.obstacles);
             this.game.physics.collide(this.game.player.sprite, this.game.enemies);
             this.game.physics.overlap(this.game.player.sprite, this.game.coins,function(player,coin){
                 coin.refThis.addToScore();
             },null);
 
+
+            /*********************************
+                UPDATE PLAYER
+            *********************************/
             this.game.player.update(direction);
+            
             if(this.game.player.sprite.inWorld){
                 this.game.camera.x += this.game.camera.speed*this.game.speed;
             }
             if(!this.game.player.sprite.inWorld){
                 this.game.state.start('menu');
             }
+            
+            /***************************************
+                DIFFICULTY
+            ***************************************/
             if(this.game.framer.currentFrame > 6000){
                 this.game.parameters.difficulty = 3;
             }
@@ -158,16 +193,26 @@ window.onload = function() {
             else if(this.game.framer.currentFrame > 2000){
                 this.game.parameters.difficulty = 1;
             }
+            
+
+            /***************************************
+                UPDATE LEVEL
+            ***************************************/
             this.game.level.update();
 
+
+            /**************************************
+                UPDATE MOUSE
+            **************************************/
             this.game.input.mousePointer2.oldX = this.game.input.mousePointer2.pageX;
             this.game.input.mousePointer2.oldY = this.game.input.mousePointer2.pageY;
 
-            this.game.hud.update();
-            this.game.framer.update();
             //DONE
         },
     };
+
+
+
     /*************************************************************
         STATE MENU
     *************************************************************/
@@ -180,6 +225,7 @@ window.onload = function() {
             console.log("PRELOAD MENU DONE")
         },
         create: function(){
+            
             //Curseur custom permettant de récupérer des directions et tout les bails
             this.game.input.mousePointer2 = this.game.input.mousePointer;
             //Positions De la frame d'avant
@@ -191,22 +237,30 @@ window.onload = function() {
             //L'écart nécéssaire pour considérer le curseur comme ayant changé de direction
             this.game.input.mousePointer2.MARGE_X = 3;
             this.game.input.mousePointer2.MARGE_Y = 3;
+
+
             //Le bouton qui lance le state run
             this.game.menu = [
                 this.game.add.button(100,100, 'button', switchToRun, this),
                 this.game.add.button(100,200, 'button', switchToOptions, this),
             ];
+            
+
             //Le text "run"
             this.game.hud = {button1:{text:'RUN',style:{font:'60px Arial',fill:'#ffffff',align:'center'}}};
             this.game.hud.display = this.game.add.text(this.game.menu[0].x + 96,this.game.menu[0].y,this.game.hud.button1.text,this.game.hud.button1.style);
+            
             this.game.hud = {button1:{text:'OPTIONS',style:{font:'60px Arial',fill:'#ffffff',align:'center'}}};
             this.game.hud.display = this.game.add.text(this.game.menu[1].x + 96,this.game.menu[1].y,this.game.hud.button1.text,this.game.hud.button1.style);
+            
             //DONE
             console.log("CREATE MENU DONE");
         },
         update: function(){
+            
             //On récupère l'objet contenant les directions
             var direction = whatHappenedWithYourMouse(this.game);
+
             //On sauvegarde les positions !!!!A LA FIN!!!!! de update pour les considérer comme old
             this.game.input.mousePointer2.oldX = this.game.input.mousePointer2.pageX;
             this.game.input.mousePointer2.oldY = this.game.input.mousePointer2.pageY;
@@ -218,10 +272,12 @@ window.onload = function() {
             this.game.load.spritesheet('button','assets/Button.png',64,64);
         },
         create: function(){
+            
             this.game.hud = {
                 title: new DisplayObject(this.game.width*0.5,0,"OPTIONS",{font:"60px Arial",fill:"#ffffff",align:"center"},"button",this.game),
                 back: new DisplayObject(this.game.width*0.5,100,"BACK",{font:"60px Arial",fill:"#ffffff",align:"center"},"button",this.game,switchToMenu,this),
             };
+            
             this.game.hud.title.display.x-=this.game.hud.title.display.width*0.5;
         },
         update: function(){
@@ -234,9 +290,11 @@ window.onload = function() {
     function whatHappenedWithYourMouse(game){
         //Si on appuie
         if(game.input.mousePointer2.isDown){
+            
             //Calcul du delta mouse
             game.input.mousePointer2.deltaX = (game.input.mousePointer2.oldX - game.input.mousePointer2.pageX);
             game.input.mousePointer2.deltaY = (game.input.mousePointer2.oldY - game.input.mousePointer2.pageY);
+            
             //Si on avait appuyé auparavant
             if(this.object){
                 //attribue la direction

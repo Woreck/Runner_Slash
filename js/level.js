@@ -2,7 +2,8 @@
 	PATTERN
 ***********************************************/
 function Pattern(map,width,height,tileWidth,tileHeight,type,difficulty,game,available){
-	this.map = {
+	
+        this.map = {
 		array:map,                    //Tableau Numérique
 		spriteArray:[],               //Tableau de sprite
 		width:width,                  //Longueur de ligne
@@ -12,11 +13,16 @@ function Pattern(map,width,height,tileWidth,tileHeight,type,difficulty,game,avai
 		tileWidth:tileWidth,          //Largeur d'un tile en pixel
 		tileHeight:tileHeight         //Hauteur d'un tile en pixel
 	};
+
 	this.type = type;                     //Type de pattern ( enemies, holes, walls)
-	this.difficulty = difficulty;         //Difficulté estimée du pattern
-	this.available = available || false;  //Disponibibilité
-	this.refGame = game;                  //Référence à game
-	this.x = null;                        //Le worldX du pattern
+	
+        this.difficulty = difficulty;         //Difficulté estimée du pattern
+	
+        this.available = available || false;  //Disponibibilité
+	
+        this.refGame = game;                  //Référence à game
+	
+        this.x = null;                        //Le worldX du pattern
 	this.y = null;                        //Le worldY du pattern
 };
 Pattern.prototype.constructor = Pattern;
@@ -73,10 +79,14 @@ Pattern.prototype.kill = function(){
 	MANAGER
 *************************************/
 function ManagerPattern(game){
-	this.refGame = game;                                                           //Référence au game
-	this.dataBase = new DataBase(game);                                            //Base de donnée des patterns
-	this.patterns = [];                                                            //Patterns actuellement dans le monde
-	this.addPattern(this.dataBase.clone(this.dataBase.base.walls[0]),1000);        //Ajout de pattern à this.patterns
+	
+        this.refGame = game;                                                           //Référence au game
+	
+        this.dataBase = new DataBase(game);                                            //Base de donnée des patterns
+	
+        this.patterns = [];                                                            //Patterns actuellement dans le monde
+	
+        this.addPattern(this.dataBase.clone(this.dataBase.base.walls[0]),1000);        //Ajout de pattern à this.patterns
         this.addPattern(this.dataBase.clone(this.dataBase.base.walls[0]),1832);        //Identique
 }
 ManagerPattern.prototype.constructor = ManagerPattern;

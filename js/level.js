@@ -11,7 +11,7 @@ function Pattern(map,width,height,tileWidth,tileHeight,type,difficulty,game,avai
 		heightPx:tileHeight*height,   //Hauteur en pixel du pattern
 		tileWidth:tileWidth,          //Largeur d'un tile en pixel
 		tileHeight:tileHeight         //Hauteur d'un tile en pixel
-	}
+	};
 	this.type = type;                     //Type de pattern ( enemies, holes, walls)
 	this.difficulty = difficulty;         //Difficulté estimée du pattern
 	this.available = available || false;  //Disponibibilité

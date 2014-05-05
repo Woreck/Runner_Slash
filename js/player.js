@@ -323,7 +323,10 @@ Permet de sprinter vers l'avant en tracant un
 trait vers la droite
 *************************************************/
 Player.prototype.dashing = function(dir){
+  
   this.timeBeforeCanDash++;
+
+
   //Si pas entrain de dasher
   if(this.canDash && !this.dash ){
       this.aura.x = this.sprite.x - 100;
@@ -332,31 +335,47 @@ Player.prototype.dashing = function(dir){
   else{
      this.aura.x = 0;
   }
+
+
   //Si par terre + time > 30
   if(this.sprite.body.touching.down && this.timeBeforeCanDash > this.parameters.dash.timeBeforeCanDash ){
     this.canDash = true;
   }
+  
+
   //Si il peut dasher et qu'on trace vers la droite un trait de 151 px min
   if(dir && this.canDash && dir.width > this.parameters.dash.mouseWidthToDash && !this.fury.activated){
     if(dir.direction.right){
       this.dash = true;
     }
   }
+  
+
   //Si le dash est activé
   if(this.dash){
-    this.sprite.body.gravity.y = 0;
+    
     this.dashTime++;
+    
+    this.sprite.body.gravity.y = 0;
     this.sprite.body.velocity.x = this.parameters.dash.velocity;
+    
     this.sprite.alpha = 0.5;
+    
     //Si il atteint les 10 frames il s'arrete
     if(this.dashTime >= 10){
+      
       this.dashTime = 0;
-      this.sprite.body.velocity.x = this.parameters.adjust.normal;
+      
       this.dash = false;
       this.canDash = false;
-      this.timeBeforeCanDash = 0;
+      
+      this.sprite.body.velocity.x = this.parameters.adjust.normal;
       this.sprite.body.gravity.y = this.parameters.gravity;
       this.sprite.alpha = 1;
+      
+      this.timeBeforeCanDash = 0;
+      
     }
+    
   }
 };

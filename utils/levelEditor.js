@@ -45,7 +45,6 @@ function LevelEditor( idCanvas, width, height){
 		name: ""
 	});
 
-
 	/************************************
 		EVENTS SUBSCRIBING
 	************************************/
@@ -88,7 +87,8 @@ function LevelEditor( idCanvas, width, height){
 		name:"Gomme"
 	});
 
-	this.buttons.changeDifficulty1 = this.addDomElement( "Difficulty1Chooser", "button", {onclick:function(){
+
+	this.buttons.changeDifficulty0 = this.addDomElement( "Difficulty1Chooser", "button", {onclick:function(){
 			that.map.changeDifficulty(0);
 		},
 		name:"difficulty 0"
@@ -100,7 +100,7 @@ function LevelEditor( idCanvas, width, height){
 		name:"difficulty 1"
 	});
 
-	this.buttons.changeDifficulty1 = this.addDomElement( "Difficulty1Chooser", "button", {onclick:function(){
+	this.buttons.changeDifficulty2 = this.addDomElement( "Difficulty1Chooser", "button", {onclick:function(){
 			that.map.changeDifficulty(2);
 		},
 		name:"difficulty 2"
@@ -143,6 +143,7 @@ function Map( refLE, width, height ){
 	};
 
 	this.type = "holes";
+
 
 	this.difficulty = 0;
 
@@ -205,6 +206,7 @@ function Map( refLE, width, height ){
 	this.changeType = function(type){
 		this.type = type;
 	};
+
 
 	this.changeDifficulty = function(difficulty){
 		this.difficulty = difficulty;

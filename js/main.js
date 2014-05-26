@@ -3,7 +3,7 @@ window.onload = function() {
 
 
     /**********************************
-    STATE RUN
+    STATE RUN 
     **********************************/
     var run = {
         //PRELOAD

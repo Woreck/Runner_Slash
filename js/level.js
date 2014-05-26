@@ -53,6 +53,7 @@ function Stage(refGame,tileWidth,tileHeight){
                                 }
                         }
                 }
+                console.log("done create Pattern",pattern)
                 this.translatePatternToSprite(pattern,_offsetX,_endX);
         };
 

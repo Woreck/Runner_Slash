@@ -52,8 +52,8 @@ window.onload = function() {
             this.game.input.mousePointer2.deltaX = this.game.input.mousePointer2.oldX-this.game.input.mousePointer2.x;
             this.game.input.mousePointer2.deltaY = this.game.input.mousePointer2.oldY-this.game.input.mousePointer2.y;
             //L'écart nécéssaire pour considérer le curseur comme ayant changé de direction
-            this.game.input.mousePointer2.MARGE_X = 3;
-            this.game.input.mousePointer2.MARGE_Y = 3;
+            this.game.input.mousePointer2.MARGE_X = this.game.input.mousePointer2.MARGE_X || 3;
+            this.game.input.mousePointer2.MARGE_Y = this.game.input.mousePointer2.MARGE_Y || 3;
 
             window.onkeydown = function(e){
                 if(that.game.player.fury.amount == that.game.player.fury.parameters.amountMax && !that.game.player.dash){
@@ -132,8 +132,6 @@ window.onload = function() {
             this.game.obstacles = this.game.add.group();
             this.game.enemies = this.game.add.group();
             this.game.coins = this.game.add.group();
-
-            this.game.level = new ManagerPattern(this.game);
             
             //DONE
             console.log("CREATE RUN DONE");
@@ -163,7 +161,9 @@ window.onload = function() {
                 PHYSIC
             *********************************/
             this.game.physics.collide(this.game.player.sprite, this.game.obstacles);
-            this.game.physics.collide(this.game.player.sprite, this.game.enemies);
+            this.game.physics.collide(this.game.player.sprite, this.game.enemies,function(player,enemy){
+                player.health -= 10;
+            });
             this.game.physics.overlap(this.game.player.sprite, this.game.coins,function(player,coin){
                 coin.refThis.addToScore();
             },null);
@@ -177,8 +177,8 @@ window.onload = function() {
             if(this.game.player.sprite.inWorld){
                 this.game.camera.x += this.game.camera.speed*this.game.speed;
             }
-            if(!this.game.player.sprite.inWorld){
-                this.game.state.start('menu');
+            if(!this.game.player.sprite.inWorld || this.game.player.sprite.health <= 0){
+                this.game.state.start('death');
             }
             
             /***************************************
@@ -198,7 +198,7 @@ window.onload = function() {
             /***************************************
                 UPDATE LEVEL
             ***************************************/
-            this.game.level.update();
+            
 
 
             /**************************************
@@ -235,8 +235,8 @@ window.onload = function() {
             this.game.input.mousePointer2.deltaX = this.game.input.mousePointer2.oldX - this.game.input.mousePointer2.x;
             this.game.input.mousePointer2.deltaY = this.game.input.mousePointer2.oldY - this.game.input.mousePointer2.y;
             //L'écart nécéssaire pour considérer le curseur comme ayant changé de direction
-            this.game.input.mousePointer2.MARGE_X = 3;
-            this.game.input.mousePointer2.MARGE_Y = 3;
+            this.game.input.mousePointer2.MARGE_X = this.game.input.mousePointer2.MARGE_X || 3;
+            this.game.input.mousePointer2.MARGE_Y = this.game.input.mousePointer2.MARGE_Y || 3;
 
 
             //Le bouton qui lance le state run
@@ -266,6 +266,35 @@ window.onload = function() {
             this.game.input.mousePointer2.oldY = this.game.input.mousePointer2.pageY;
         }
     };
+
+    //STATE DEATH
+    var death = {
+        preload: function(){
+
+        },
+        create: function(){
+            var title = game.add.text(0,0,"GAME OVER",{font:"60px Arial",fill:"#ffffff",align:"center"});
+            
+            var tryAgain = this.game.add.button(0,0,"button",function(){
+                this.game.state.start("run");
+            });
+
+            var tryAgainText = this.game.add.text(0,0,"Try again",{font:"60px Arial",fill:"#ffffff",align:"center"});
+
+            title.x = this.game.width*0.5 - (title.width*0.5);
+            tryAgain.x = this.game.width * 0.5 - (tryAgain.width * 0.5);
+            tryAgain.y = this.game.height * 0.75;
+
+            tryAgainText.x = tryAgain.x+tryAgain.width + 20;
+            tryAgainText.y = tryAgain.y;
+        },
+        update: function(){
+
+        }
+    };
+
+
+
     //STATE OPTIONS
     var options = {
         preload: function(){
@@ -273,12 +302,34 @@ window.onload = function() {
         },
         create: function(){
             
+            var that = this;
+
             this.game.hud = {
                 title: new DisplayObject(this.game.width*0.5,0,"OPTIONS",{font:"60px Arial",fill:"#ffffff",align:"center"},"button",this.game),
                 back: new DisplayObject(this.game.width*0.5,100,"BACK",{font:"60px Arial",fill:"#ffffff",align:"center"},"button",this.game,switchToMenu,this),
             };
             
             this.game.hud.title.display.x-=this.game.hud.title.display.width*0.5;
+
+            var lessMARGE_X = game.add.button(0,0,"button",function(){
+                that.game.input.mousePointer2.MARGE_X--;
+                if(that.game.input.mousePointer2.MARGE_X < 1){
+                    that.game.input.mousePointer2.MARGE_X = 1;
+                }
+                console.log(that.game.input.mousePointer2.MARGE_X)
+            });
+            var moreMARGE_X = game.add.button(0,0,"button",function(){
+                that.game.input.mousePointer2.MARGE_X++;
+                if(that.game.input.mousePointer2.MARGE_X > 10){
+                    that.game.input.mousePointer2.MARGE_X = 10;
+                }
+                console.log(that.game.input.mousePointer2.MARGE_X)
+            });
+
+            lessMARGE_X.x = this.game.width*0.25 - (lessMARGE_X.width*0.5);
+            moreMARGE_X.x = this.game.width*0.75 - (moreMARGE_X.width * 0.5);
+            lessMARGE_X.y = this.game.height * 0.5;
+            moreMARGE_X.y = this.game.height * 0.5;
         },
         update: function(){
 
@@ -398,7 +449,9 @@ window.onload = function() {
                 }
             }
         }
-    }
+    };
+
+    game.state.add("death", death);
     game.state.add('run', run);
     game.state.add('menu', menu);
     game.state.add('options', options);

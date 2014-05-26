@@ -8,6 +8,8 @@ function Player(sprite, game){
 
   //SPRITE\\
   this.sprite = sprite;
+
+  this.sprite.refThis = this;
   
   this.sprite.animations.add('run', ['sprite1', 'sprite2', 'sprite3', 'sprite4', 'sprite5', 'sprite6', 'sprite7', 'sprite8', 'sprite9']);
   this.sprite.animations.play('run',this.parameters.animations.frameRate.run||15,true);
@@ -21,6 +23,8 @@ function Player(sprite, game){
   
   this.sprite.outOfBoundsKill = true;
   
+
+  this.canSlash = true;
 
 
   //FURY
@@ -70,7 +74,9 @@ function Player(sprite, game){
   this.emitterParticles.start(false, 1000,0.1);
 
 };
-Player.prototype.constructor = Player
+Player.prototype.constructor = Player;
+
+
 /***********************************************
 Fonction a éxécuter a 60FPS
 ***********************************************/
@@ -106,6 +112,8 @@ Player.prototype.update = function update(direction){
   this.earthQuaking(direction);
   this.updateFury();
 };
+
+
 /*****************************************************
 Regarde si le joueur est en collision avec 
 un élément en dessous
@@ -117,6 +125,8 @@ Player.prototype.checkCollisionGround = function checkCollisionGround(){
   }
   return false;
 };
+
+
 /*****************************************************
 Regarde si le joueur peux encore sauter
 puis si celui ci trace un trait vers le haut
@@ -129,6 +139,8 @@ Player.prototype.checkJump = function checkJump(direction){
     }
   }
 };
+
+
 /*****************************************************
 Donne une impulsion au joueur et réduit son nombre
 de saut.
@@ -138,6 +150,8 @@ Player.prototype.jumping = function jumping(){
   this.sprite.body.velocity.y = this.jump.parameters.velocity*this.refGame.speed;
   this.jump.amount--;
 };
+
+
 /*****************************************************
 Regarde si le joueur appuie ou non sur la souris
 *****************************************************/
@@ -148,6 +162,8 @@ Player.prototype.checkReleasedInput = function checkReleasedInput(){
   }
   return false;
 };
+
+
 /*****************************************************
 Regarde si le joueur trace un trait vers "where"
 *****************************************************/
@@ -157,6 +173,8 @@ Player.prototype.checkInput = function checkInput(input,where){
   }
   return false;
 };
+
+
 /*****************************
 Ajustement camera
 *****************************/
@@ -173,6 +191,8 @@ Player.prototype.adjust = function(){
     this.sprite.body.velocity.x =  this.parameters.adjust.normal*this.refGame.speed;
   }
 };
+
+
 /****************************
 Manager de Fury ?
 ****************************/
@@ -216,11 +236,13 @@ Player.prototype.updateFury = function(){
     }
   }
 };
+
+
 /***********************************************************
 Attaque "SLASH" du joueur
 ***********************************************************/
 Player.prototype.slash = function slash(direction){
-  if(this.refGame.input.mousePointer.isDown){
+  if(this.refGame.input.mousePointer.isDown && this.canSlash){
     if(direction){
       var points = {
         enter: {
@@ -259,11 +281,17 @@ Player.prototype.slash = function slash(direction){
            this.isIn(points.mid, enemy) && 
            this.isOut(points.end, enemy)){
             enemy.refThis.addToScore();
+          this.canSlash = false;
         }
       },this);
     }
   }
+  else if(!this.canSlash && this.refGame.input.mousePointer.isUp){
+    this.canSlash = true;
+  }
 };
+
+
 Player.prototype.upperPoint = function(arg){
   if(arg.enter.x > arg.end.x){
     arg.greater.x = arg.enter.x;
@@ -278,6 +306,8 @@ Player.prototype.upperPoint = function(arg){
     arg.greater.y = arg.end.y;
   }
 };
+
+
 Player.prototype.downerPoint = function(arg){
   if(arg.enter.x < arg.end.x){
     arg.lesser.x = arg.enter.x;
@@ -292,6 +322,8 @@ Player.prototype.downerPoint = function(arg){
     arg.lesser.y = arg.end.y;
   }
 };
+
+
 Player.prototype.isIn = function(point, target){
   if(point.x >= target.x &&
     point.x <= target.x+target.width &&
@@ -301,6 +333,8 @@ Player.prototype.isIn = function(point, target){
   }
   return false;
 };
+
+
 Player.prototype.isOut = function(point, target){
   if((point.x < target.x || point.x > target.x+target.width) ||
      (point.y < target.y || point.y > target.y+target.height)){
@@ -308,6 +342,8 @@ Player.prototype.isOut = function(point, target){
   }
   return false;
 };
+
+
 /**************************************************
 Permet de foncer vers le sol
 **************************************************/
@@ -318,6 +354,8 @@ Player.prototype.earthQuaking = function(dir){
     }
   }  
 };
+
+
 /*************************************************
 Permet de sprinter vers l'avant en tracant un 
 trait vers la droite

@@ -133,6 +133,10 @@ window.onload = function() {
             this.game.enemies = this.game.add.group();
             this.game.coins = this.game.add.group();
             
+            this.game.level = new Stage(this.game,64,64);
+            this.game.level.createPattern(this.game.camera.x,0);
+            this.game.level.createPattern(this.game.level.map[0].startX+this.game.level.map[0].endX,0);
+
             //DONE
             console.log("CREATE RUN DONE");
         },
@@ -198,7 +202,7 @@ window.onload = function() {
             /***************************************
                 UPDATE LEVEL
             ***************************************/
-            
+            this.game.level.update();
 
 
             /**************************************

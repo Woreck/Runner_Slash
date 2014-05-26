@@ -7,11 +7,14 @@ function Block(x,y,game,type){
 	this.type = type || "1";
 	
 	this.sprite = this.refGame.obstacles.create(x,y,'block'+this.type);
+	this.sprite.body.immovable = true;
 	
 	switch(this.type){
 		case "1":
 		this.weight = 1;
 		break;
+		default:
+		this.weight = 1;
 	}
 };
 Block.prototype.constructor = Block;
@@ -19,7 +22,6 @@ Block.prototype.kill = function(){
 	this.sprite.kill();
 	delete this.refGame;
 	delete this.type;
-	delete this.lol;
 };
 /********************************************
 	COINS
@@ -141,4 +143,4 @@ function Hud(game){
 Hud.prototype.constructor = Hud;
 Hud.prototype.update = function(){
 	this.fury.update();
-}
+};

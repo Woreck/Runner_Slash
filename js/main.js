@@ -3,7 +3,7 @@ window.onload = function() {
 
 
     /**********************************
-    STATE RUN test commit biatch
+    STATE RUN 
     **********************************/
     var run = {
         //PRELOAD

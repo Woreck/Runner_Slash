@@ -49,7 +49,6 @@ function Stage(refGame,tileWidth,tileHeight){
                 this.map.push(patternArraySprite);
                 console.log("done translatePatternToSprite")
         };
-
         this.update = function(){
                 if(this.map[0].startX+refGame.width <= refGame.camera.x){
                         this.createPattern(this.map[1].startX+this.map[1].endX,0);

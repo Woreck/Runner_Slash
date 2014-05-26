@@ -14,9 +14,13 @@ function Stage(refGame,tileWidth,tileHeight){
         this.createPattern = function(_offsetX,_offsetY){
                 var pattern = [];
                 var _endX = 0;
+                var done =false;
                 var holes = [];
                 for(var y = 0; y < this.refGame.height; y += this.parameters.tiles.height){
                         for(var x = 0; x < this.refGame.width; x += this.parameters.tiles.width){
+                                if(!done){
+                                        _endX += this.parameters.tiles.width;
+                                }
                                 if(y > this.refGame.height*0.75){
                                         var rng = Math.random();
                                         if(rng < 0.1){
@@ -50,10 +54,10 @@ function Stage(refGame,tileWidth,tileHeight){
                                                 pattern.push({x:_offsetX+x,y:_offsetY+y,type:1,objectType:1});
                                         }
                                 }
-                                _endX += x+this.parameters.tiles.width;
                         }
+                        done = true;
                 }
-                console.log("done create Pattern",pattern)
+                console.log("done create Pattern",pattern,_endX)
                 this.translatePatternToSprite(pattern,_offsetX,_endX);
         };
 

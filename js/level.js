@@ -48,9 +48,9 @@ function Stage(refGame,tileWidth,tileHeight){
                                                         continue;
                                                 }
                                                 pattern.push({x:_offsetX+x,y:_offsetY+y,type:1,objectType:1});
-                                                _endX = _endX < x + this.parameters.tiles.width ? x + this.parameters.tiles.width : _endX;
                                         }
                                 }
+                                _endX += x+this.parameters.tiles.width;
                         }
                 }
                 console.log("done create Pattern",pattern)
@@ -81,7 +81,7 @@ function Stage(refGame,tileWidth,tileHeight){
 
         this.update = function(){
                 if(this.map[0].startX+this.map[0].endX < refGame.camera.x){
-                        this.createPattern(this.map[1].startX+this.map[1].endX > refGame.camera.x+refGame.camera.width ? this.map[1].startX+this.map[1].endX : refGame.camera.x+refGame.camera.width,0);
+                        this.createPattern(this.map[1].startX+this.map[1].endX,0);
                         this.destroyPattern(0);
                 }
         };

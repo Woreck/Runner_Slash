@@ -229,7 +229,7 @@ window.onload = function() {
             console.log("PRELOAD MENU DONE")
         },
         create: function(){
-            
+//--------------------------------A changer de positions--------------------------------------------------------------
             //Curseur custom permettant de récupérer des directions et tout les bails
             this.game.input.mousePointer2 = this.game.input.mousePointer;
             //Positions De la frame d'avant
@@ -241,22 +241,20 @@ window.onload = function() {
             //L'écart nécéssaire pour considérer le curseur comme ayant changé de direction
             this.game.input.mousePointer2.MARGE_X = this.game.input.mousePointer2.MARGE_X || 3;
             this.game.input.mousePointer2.MARGE_Y = this.game.input.mousePointer2.MARGE_Y || 3;
+//-----------------------------------------------------------------------------------------------------------------------
 
 
             //Le bouton qui lance le state run
-            this.game.menu = [
-                this.game.add.button(100,100, 'button', switchToRun, this),
-                this.game.add.button(100,200, 'button', switchToOptions, this),
+            this.buttons = [
+                this.game.add.button(-200,100, 'button', switchToRun, this),
+                this.game.add.button(-200,200, 'button', switchToOptions, this),
             ];
             
+            for (var i = 0; i < this.buttons.length; i++) {
+                game.add.tween(this.buttons[i]).to({x:this.game.width/2 - this.buttons[i].width/2}, 500, Phaser.Easing.Cubic.None,true,200*i);
+                game.add.tween(this.buttons[i].scale).to({x:0.7,y:0.7}, 500, Phaser.Easing.Cubic.None,true,0).to({x:1,y:1}, 500, Phaser.Easing.Cubic.Out,true,0).loop().start();
 
-            //Le text "run"
-            this.game.hud = {button1:{text:'RUN',style:{font:'60px Arial',fill:'#ffffff',align:'center'}}};
-            this.game.hud.display = this.game.add.text(this.game.menu[0].x + 96,this.game.menu[0].y,this.game.hud.button1.text,this.game.hud.button1.style);
-            
-            this.game.hud = {button1:{text:'OPTIONS',style:{font:'60px Arial',fill:'#ffffff',align:'center'}}};
-            this.game.hud.display = this.game.add.text(this.game.menu[1].x + 96,this.game.menu[1].y,this.game.hud.button1.text,this.game.hud.button1.style);
-            
+            };
             //DONE
             console.log("CREATE MENU DONE");
         },

@@ -246,14 +246,14 @@ window.onload = function() {
 
             //Le bouton qui lance le state run
             this.buttons = [
-                this.game.add.button(-200,100, 'button', switchToRun, this),
-                this.game.add.button(-200,200, 'button', switchToOptions, this),
-            ];
-            
+                this.game.add.button(200,100, 'button', switchToRun, this),
+                this.game.add.button(200,200, 'button', switchToOptions, this),
+            ];            
             for (var i = 0; i < this.buttons.length; i++) {
-                game.add.tween(this.buttons[i]).to({x:this.game.width/2 - this.buttons[i].width/2}, 500, Phaser.Easing.Cubic.None,true,200*i);
-                game.add.tween(this.buttons[i].scale).to({x:0.7,y:0.7}, 500, Phaser.Easing.Cubic.None,true,0).to({x:1,y:1}, 500, Phaser.Easing.Cubic.Out,true,0).loop().start();
-
+                this.buttons[i].x=this.game.width/2-this.buttons[i].width/2-i*-100
+                this.buttons[i].anchor={x:0.5,y:0.5};
+                this.buttons[i].scale={x:0,y:0};
+                game.add.tween(this.buttons[i].scale).to({x:1,y:1}, 500, Phaser.Easing.Bounce.Out,true,500*i);
             };
             //DONE
             console.log("CREATE MENU DONE");

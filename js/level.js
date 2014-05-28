@@ -5,7 +5,6 @@ function Stage(refGame,tileWidth,tileHeight){
                         width:tileWidth,
                         height:tileHeight
                 },
-
         };
         this.refGame = refGame;
 
@@ -13,52 +12,41 @@ function Stage(refGame,tileWidth,tileHeight){
 
         this.createPattern = function(_offsetX,_offsetY){
                 var pattern = [];
-                var _endX = 0;
-                var done =false;
                 var holes = [];
-                for(var y = 0; y < this.refGame.height; y += this.parameters.tiles.height){
-                        for(var x = 0; x < this.refGame.width; x += this.parameters.tiles.width){
-                                if(!done){
-                                        _endX += this.parameters.tiles.width;
+
+                for(var y = 0; y < this.parameters.pattern.y; y++){
+                        for(var x = 0; x < this.parameters.pattern.x; x++){
+                                var xPix = (x * this.parameters.tiles.width) + _offsetX;
+                                var yPix = (y * this.parameters.tiles.height) + _offsetY;
+                                var inAHole = false;
+                                for(var i = 0; i < holes.length; i++){
+                                    if(x >= holes[i].x && x < holes[i].x+holes[i].width){
+                                        inAHole = true;
+                                    }
                                 }
-                                if(y > this.refGame.height*0.75){
-                                        var rng = Math.random();
-                                        if(rng < 0.1){
-                                                var inAHole = false;
-                                                var canBeAHole = true
-                                                for(var i = 0; i < holes.length; i++){
-                                                        if(x >= holes[i].x && x < holes[i].endX){
-                                                                inAHole = true;
-                                                        }
-                                                }
-                                                for(var i = 0; i < pattern.length; i++){
-                                                        if(pattern[i].x == x+_offsetX){
-                                                                canBeAHole = false;
-                                                        }
-                                                }
-                                                if(inAHole || !canBeAHole){
-                                                        continue;
-                                                }
-                                                //TROU INCOMING
-                                                holes.push({x:x,y:y,endX:x+(((Math.random()*3)+1)|0)*this.parameters.tiles.width});
-                                        }else{
-                                                var inAHole = false;
-                                                for(var i = 0; i < holes.length; i++){
-                                                        if(x >= holes[i].x && x <= holes[i].endX){
-                                                                inAHole = true;
-                                                        }
-                                                }
-                                                if(inAHole){
-                                                        continue;
-                                                }
-                                                pattern.push({x:_offsetX+x,y:_offsetY+y,type:1,objectType:1});
+                                var currentCase = {x:xPix,y:yPix,type:0,objectType:0};
+
+                                if(currentCase.y > refGame.height * 0.75 && !inAHole){
+                                    
+                                    var rng = Math.random();
+                                    if(rng < 0.1){
+                                        var yTop = y-1 >= 0 ? y-1 : 0;
+                                        if(pattern[x+(yTop*this.parameters.pattern.x)].type == 1){
+                                            currentCase.type = 1;
+                                            currentCase.objectType = 1;
                                         }
+                                        else{
+                                            holes.push({x:x,y:y,width:((Math.random()*2)+1)|0,height:this.parameters.pattern.y-y});
+                                        }
+                                    }else{
+                                        currentCase.type = 1;
+                                        currentCase.objectType = 1;
+                                    }
                                 }
+                                pattern.push(currentCase);
                         }
-                        done = true;
                 }
-                console.log("done create Pattern",pattern,_endX)
-                this.translatePatternToSprite(pattern,_offsetX,_endX);
+                this.translatePatternToSprite(pattern,_offsetX,this.parameters.pattern.xPix);
         };
 
         this.destroyPattern = function(id){
@@ -66,12 +54,14 @@ function Stage(refGame,tileWidth,tileHeight){
                         this.map[id].array[i].kill();
                 }
                 this.map.splice(id,1);
-                console.log(refGame.obstacles.length);
         };
 
         this.translatePatternToSprite = function(pattern,_offsetX,_endX){
                 var patternArraySprite = {array:[],startX:_offsetX,endX:_endX};
                 for(var i = 0; i < pattern.length; i++){
+                        if(pattern[i] === undefined){
+                                continue;
+                        }
                         if(pattern[i].type === 1){
                                 var object = new Block(pattern[i].x,pattern[i].y,refGame,pattern[i].objectType);
                                 patternArraySprite.array.push(object.sprite);
@@ -82,6 +72,51 @@ function Stage(refGame,tileWidth,tileHeight){
                 }
                 this.map.push(patternArraySprite);
         };
+
+        this.determinePatternSize = function(){
+                var patternSize = {
+                        x: 0,
+                        y: 0,
+                        xPix: 0,
+                        yPix: 0
+                };
+
+                var done = false;
+
+                for(var y = 0; y < refGame.height; y += this.parameters.tiles.height){
+                        patternSize.y++;
+                        patternSize.yPix += this.parameters.tiles.height;
+                }
+
+                for(var x = 0; x < refGame.width; x += this.parameters.tiles.width){
+                        patternSize.x++;
+                        patternSize.xPix += this.parameters.tiles.width;
+                }
+
+                return patternSize;
+        };
+
+        this.isInHoles = function(x,y,holes){
+
+                for(var i = 0; i < holes.length; i++){
+                        if(x >= holes[i].x && x <= holes[i].width && y >= holes[i].y && y <= holes[i].height){
+                                return true;
+                        }
+                }
+
+                return false;
+        };
+
+        this.createHoles = function(x,y,holes){
+                 holes.push({
+                        x:x,
+                        y:y,
+                        width:(((Math.random()*2)+1)|0)*this.parameters.tiles.width,
+                        height:this.parameters.pattern.yPix-y
+                });
+        };
+
+        this.parameters.pattern = this.determinePatternSize();
 
         this.update = function(){
                 if(this.map[0].startX+this.map[0].endX < refGame.camera.x){

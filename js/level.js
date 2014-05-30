@@ -98,7 +98,6 @@ function Stage(refGame,tileWidth,tileHeight){
                                                 }
                                             });
                                         };
-
                                     }
                                     //SOL
                                     else{

@@ -99,6 +99,50 @@ Enemies.prototype.kill = function(){
 	return true;
 };
 /********************************************
+	RED BLOCK DEBUG
+********************************************/
+function RedBlock(x,y,refGame,type){
+	this.refGame = refGame;
+	this.sprite = refGame.redBlock.create(x,y,"redBlock");
+	this.sprite.refThis = this;
+	this.speed = 1;
+};
+RedBlock.prototype.update = function(){
+	this.sprite.body.velocity.x -= 10*this.speed;
+};
+RedBlock.prototype.kill = function(){
+	this.sprite.kill();
+	delete this.refGame;
+	delete this.type;
+	return true;
+};
+/********************************************
+	DOOR
+********************************************/
+function Door(x,y,refGame,id){
+	this.refGame = refGame;
+	this.sprite = refGame.doors.create(x,y,"redBlock");
+	this.sprite.scale.y = 2;
+	this.sprite.body.immovable = true;
+	this.idNumber = id;
+	this.open = false;
+};
+/********************************************
+	TRIGGER DOOR
+********************************************/
+function Trigger(x,y,refGame,callback){
+	this.refGame = refGame;
+	this.sprite = refGame.triggers.create(x,y,"redBlock");
+	this.sprite.body.immovable = true;
+	this.sprite.refThis = this;
+	this.callback = callback;
+	this.activated = false;
+};
+Trigger.prototype.use = function(){
+	this.activated = !this.activated;
+	this.callback();
+};
+/********************************************
 	DISPLAY OBJECT
 ********************************************/
 function DisplayObject(x,y,text,style,key,game,callback,context){

@@ -31,6 +31,8 @@ window.onload = function() {
             this.game.load.audio('coins', ["assets/Pickup_Coin26.wav"]);
             this.game.load.audio('jump1', ["assets/Jump12.wav"]);
             this.game.load.audio('jump2', ["assets/Jump13.wav"]);
+            //REDBLOCK DEBUG
+            this.game.load.image("redBlock", "assets/enemi.png");
             //DONE
             console.log("PRELOAD RUN DONE",this.game);
         },
@@ -132,6 +134,9 @@ window.onload = function() {
             this.game.obstacles = this.game.add.group();
             this.game.enemies = this.game.add.group();
             this.game.coins = this.game.add.group();
+            this.game.redBlock = this.game.add.group();
+            this.game.doors = this.game.add.group();
+            this.game.triggers = this.game.add.group();
             
             this.game.level = new Stage(this.game,64,64);
             this.game.level.createPattern(this.game.camera.x,0);
@@ -164,6 +169,7 @@ window.onload = function() {
             /*********************************
                 PHYSIC
             *********************************/
+            //console.log(this.game.player.sprite.y)
             this.game.physics.collide(this.game.player.sprite, this.game.obstacles);
             this.game.physics.collide(this.game.player.sprite, this.game.enemies,function(player,enemy){
                 player.health -= 10;
@@ -171,6 +177,16 @@ window.onload = function() {
             this.game.physics.overlap(this.game.player.sprite, this.game.coins,function(player,coin){
                 coin.refThis.addToScore();
             },null);
+            this.game.physics.overlap(this.game.player.sprite, this.game.redBlock, function(player, redBlock){
+                player.health -= 10;
+            });
+            this.game.physics.collide(this.game.player.sprite,this.game.doors);
+            this.game.physics.overlap(this.game.player.sprite,this.game.triggers,function(player,trigger){
+                if(!trigger.activated){
+                    trigger.refThis.use();
+                }
+            });
+            this.game.physics.collide(this.game.player.sprite, this.game.triggers);
 
 
             /*********************************
@@ -203,6 +219,9 @@ window.onload = function() {
                 UPDATE LEVEL
             ***************************************/
             this.game.level.update();
+            this.game.redBlock.forEach(function(redBlock,lol){
+                redBlock.refThis.update();
+            });
 
 
             /**************************************

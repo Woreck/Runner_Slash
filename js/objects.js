@@ -124,8 +124,13 @@ function Door(x,y,refGame,id){
 	this.sprite = refGame.doors.create(x,y,"redBlock");
 	this.sprite.scale.y = 2;
 	this.sprite.body.immovable = true;
+	this.sprite.refThis = this;
 	this.idNumber = id;
 	this.open = false;
+};
+Door.prototype.kill = function(){
+	this.sprite.kill();
+
 };
 /********************************************
 	TRIGGER DOOR

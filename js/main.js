@@ -182,12 +182,11 @@ window.onload = function() {
             });
             this.game.physics.collide(this.game.player.sprite,this.game.doors);
             this.game.physics.overlap(this.game.player.sprite,this.game.triggers,function(player,trigger){
-                if(!trigger.activated){
+                if(!trigger.refThis.activated){
                     trigger.refThis.use();
-                }
+                    player.body.velocity.x -= 3000;
+                };
             });
-            this.game.physics.collide(this.game.player.sprite, this.game.triggers);
-
 
             /*********************************
                 UPDATE PLAYER

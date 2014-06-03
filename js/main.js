@@ -138,9 +138,7 @@ window.onload = function() {
             this.game.doors = this.game.add.group();
             this.game.triggers = this.game.add.group();
             
-            this.game.level = new Stage(this.game,64,64);
-            this.game.level.createPattern(this.game.camera.x,0);
-            this.game.level.createPattern(this.game.level.map[0].startX+this.game.level.map[0].endX,0);
+            this.game.level = new ManagerPattern(this.game);
 
             //DONE
             console.log("CREATE RUN DONE");

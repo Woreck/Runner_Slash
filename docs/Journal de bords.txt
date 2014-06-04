@@ -1,0 +1,2 @@
+04/06/2014 - 04:38 - gamay : création d'un vrai GDD, elements du doc terminés : story, game flow macro et micro, capacité basiques du personnage.
+                             J'suis mort maiss j'ai bien kiffé mettre ca en place, plus particulierement la story.

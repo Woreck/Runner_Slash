@@ -1,0 +1,2 @@
+NOTE IMPORTANTES : TOUTE l'équipe a le droits et DOIT modifier des qu'il sent qu'il est indispensable de changé un element, dans la doc comme dans le code.
+                   Si il y a desaccords quelque part on passera a un vote sinnon chacun a le droit d'apporter n'importe quoi n'importe ou.

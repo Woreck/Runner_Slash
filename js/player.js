@@ -73,6 +73,8 @@ function Player(sprite, game){
   this.emitterParticles.makeParticles('star');
   this.emitterParticles.start(false, 1000,0.1);
 
+  this.weaponCac = new CloseRangeWeapon(game,"sword","testSword",10,10,200);
+
 };
 Player.prototype.constructor = Player;
 
@@ -107,7 +109,6 @@ Player.prototype.update = function update(direction){
   this.checkJump(direction);
   this.checkReleasedInput();
   this.adjust();
-  this.slash(direction);
   this.dashing(direction);
   this.earthQuaking(direction);
   this.updateFury();

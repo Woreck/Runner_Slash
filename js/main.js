@@ -140,6 +140,14 @@ window.onload = function() {
             
             this.game.level = new ManagerPattern(this.game);
 
+            this.game.buttonWeaponCac = game.add.button(0,0,"redBlock",function(){
+                that.game.player.weaponCac.use(that.game.player);
+            });
+
+            this.game.buttonWeaponCac.cameraOffset.x = this.game.width - this.game.buttonWeaponCac.width;
+            this.game.buttonWeaponCac.cameraOffset.y = 500;
+            this.game.buttonWeaponCac.fixedToCamera = true;
+            console.log(this.game.buttonWeaponCac,this.game.camera)
             //DONE
             console.log("CREATE RUN DONE");
         },
@@ -195,6 +203,7 @@ window.onload = function() {
                 this.game.camera.x += this.game.camera.speed*this.game.speed;
             }
             if(!this.game.player.sprite.inWorld || this.game.player.sprite.health <= 0){
+                this.game.buttonWeaponCac.fixedToCamera = false;
                 this.game.state.start('death');
             }
             
@@ -227,6 +236,7 @@ window.onload = function() {
             this.game.input.mousePointer2.oldX = this.game.input.mousePointer2.pageX;
             this.game.input.mousePointer2.oldY = this.game.input.mousePointer2.pageY;
 
+            this.game.buttonWeaponCac.bringToTop();
             //DONE
         },
     };

@@ -24,6 +24,9 @@ Block.prototype.kill = function(){
 	delete this.refGame;
 	delete this.type;
 };
+
+
+
 /********************************************
 	COINS
 ********************************************/
@@ -58,6 +61,10 @@ Coins.prototype.kill = function(){
 	delete this.points;
 	return true;
 };
+
+
+
+
 /********************************************
 	ENEMIES
 ********************************************/
@@ -98,6 +105,10 @@ Enemies.prototype.kill = function(){
 	delete this.points;
 	return true;
 };
+
+
+
+
 /********************************************
 	RED BLOCK DEBUG
 ********************************************/
@@ -116,6 +127,10 @@ RedBlock.prototype.kill = function(){
 	delete this.type;
 	return true;
 };
+
+
+
+
 /********************************************
 	DOOR
 ********************************************/
@@ -132,6 +147,9 @@ Door.prototype.kill = function(){
 	this.sprite.kill();
 
 };
+
+
+
 /********************************************
 	TRIGGER DOOR
 ********************************************/
@@ -147,6 +165,9 @@ Trigger.prototype.use = function(){
 	this.activated = !this.activated;
 	this.callback();
 };
+
+
+
 /********************************************
 	DISPLAY OBJECT
 ********************************************/
@@ -175,6 +196,9 @@ function DisplayObject(x,y,text,style,key,game,callback,context){
 
 };
 DisplayObject.prototype.constructor = DisplayObject;
+
+
+
 function Hud(game){
 	var that = this;
 	this.refGame = game;
@@ -193,4 +217,39 @@ function Hud(game){
 Hud.prototype.constructor = Hud;
 Hud.prototype.update = function(){
 	this.fury.update();
+};
+
+function CloseRangeWeapon(refGame, type, name, damage, speed, range){
+	this.refGame = refGame;
+	this.type = type;
+	this.name = name;
+	
+	this.damage = damage;
+	this.speed = speed;
+	this.range = range;
+};
+CloseRangeWeapon.prototype.use = function(player){
+	var rect = this.refGame.add.sprite(player.sprite.x+player.sprite.width,player.sprite.y,"redBlock");
+	console.log(rect.body)
+
+	this.refGame.physics.overlap(rect,this.refGame.enemies,function(weapon,enemy){
+		enemy.refThis.addToScore();
+	});
+};
+
+function LongRangeWeapon(type, name, damage, fireRate, range, amountOfClipsMax, ammoPerClips, reloadingSpeed){
+	this.type = type;
+	this.name = name;
+	
+	this.damage = damage;
+	this.fireRate = speed;
+	this.range = range;
+	
+	this.amountOfClipsMax = amountOfClipsMax;
+	this.clipsRemaining = amountOfClipsMax;
+	
+	this.ammoPerClips = ammoPerClips;
+	this.ammoRemaining = ammoPerClips;
+
+	this.reloadingSpeed = reloadingSpeed;
 };

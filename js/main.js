@@ -137,17 +137,26 @@ window.onload = function() {
             this.game.redBlock = this.game.add.group();
             this.game.doors = this.game.add.group();
             this.game.triggers = this.game.add.group();
+            this.game.bullets = this.game.add.group();
             
             this.game.level = new ManagerPattern(this.game);
 
             this.game.buttonWeaponCac = game.add.button(0,0,"redBlock",function(){
                 that.game.player.weaponCac.use(that.game.player);
             });
+            this.game.buttonWeaponCac.alpha = 0.5;
 
             this.game.buttonWeaponCac.cameraOffset.x = this.game.width - this.game.buttonWeaponCac.width;
             this.game.buttonWeaponCac.cameraOffset.y = 500;
             this.game.buttonWeaponCac.fixedToCamera = true;
-            console.log(this.game.buttonWeaponCac,this.game.camera)
+            this.game.buttonWeaponLongRange = game.add.button(0,0,"redBlock",function(){
+                that.game.player.weaponLongRange.shoot();
+            });
+            this.game.buttonWeaponLongRange.alpha = 0.5;
+
+            this.game.buttonWeaponLongRange.cameraOffset.x = this.game.width - this.game.buttonWeaponLongRange.width;
+            this.game.buttonWeaponLongRange.cameraOffset.y = 500 - this.game.buttonWeaponLongRange.height;
+            this.game.buttonWeaponLongRange.fixedToCamera = true;
             //DONE
             console.log("CREATE RUN DONE");
         },
@@ -193,7 +202,12 @@ window.onload = function() {
                     player.body.velocity.x -= 3000;
                 };
             });
-
+            if(this.game.bullets.length > 0){
+                this.game.physics.overlap(this.game.bullets, this.game.enemies,function(bullet,enemy){
+                    enemy.refThis.addToScore();
+                    bullet.kill();
+                });
+            }
             /*********************************
                 UPDATE PLAYER
             *********************************/

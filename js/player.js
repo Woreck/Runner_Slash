@@ -74,6 +74,7 @@ function Player(sprite, game){
   this.emitterParticles.start(false, 1000,0.1);
 
   this.weaponCac = new CloseRangeWeapon(game,"sword","testSword",10,10,200);
+  this.weaponLongRange = new LongRangeWeapon(game,"twin pistols", "testSword", 10, 10, 100, 10, 10, 120);
 
 };
 Player.prototype.constructor = Player;
@@ -112,6 +113,8 @@ Player.prototype.update = function update(direction){
   this.dashing(direction);
   this.earthQuaking(direction);
   this.updateFury();
+  this.weaponCac.update();
+  this.weaponLongRange.update();
 };
 
 

@@ -227,22 +227,33 @@ function CloseRangeWeapon(refGame, type, name, damage, speed, range){
 	this.damage = damage;
 	this.speed = speed;
 	this.range = range;
+	this.frameSinceUse = 0;
+};
+CloseRangeWeapon.prototype.update = function(){
+	if(this.frameSinceUse < this.speed){
+		this.frameSinceUse++;	
+	}
 };
 CloseRangeWeapon.prototype.use = function(player){
-	var rect = this.refGame.add.sprite(player.sprite.x+player.sprite.width,player.sprite.y,"redBlock");
-	console.log(rect.body)
+	if(this.frameSinceUse >= this.speed){
+		var rect = this.refGame.add.sprite(player.sprite.x+player.sprite.width,player.sprite.y,"redBlock");
+		rect.width = this.range;
+		rect.body.width = this.range;
 
-	this.refGame.physics.overlap(rect,this.refGame.enemies,function(weapon,enemy){
-		enemy.refThis.addToScore();
-	});
+		this.refGame.physics.overlap(rect,this.refGame.enemies,function(weapon,enemy){
+			enemy.refThis.addToScore();
+		});
+		this.frameSinceUse = 0;
+	}
 };
 
-function LongRangeWeapon(type, name, damage, fireRate, range, amountOfClipsMax, ammoPerClips, reloadingSpeed){
+function LongRangeWeapon(refGame, type, name, damage, fireRate, range, amountOfClipsMax, ammoPerClips, reloadingSpeed){
+	this.refGame = refGame;
 	this.type = type;
 	this.name = name;
 	
 	this.damage = damage;
-	this.fireRate = speed;
+	this.fireRate = fireRate;
 	this.range = range;
 	
 	this.amountOfClipsMax = amountOfClipsMax;
@@ -252,4 +263,60 @@ function LongRangeWeapon(type, name, damage, fireRate, range, amountOfClipsMax, 
 	this.ammoRemaining = ammoPerClips;
 
 	this.reloadingSpeed = reloadingSpeed;
+	this.isReloading = false;
+
+	this.frameSinceShoot = 0;
+	this.frameReload = 0;
+	
+};
+LongRangeWeapon.prototype.update = function(){
+	if(this.isReloading){
+		this.frameReload++;
+		if(this.frameReload >= this.reloadingSpeed){
+			this.ammoRemaining = this.ammoPerClips;
+			this.clipsRemaining--;
+			this.isReloading = false;
+		}
+	}
+	else{
+		this.frameSinceShoot++;
+	}
+};
+LongRangeWeapon.prototype.shoot = function(){
+	console.log(this.ammoRemaining,this.clipsRemaining)
+	if(this.ammoRemaining > 0 && this.frameSinceShoot >= this.fireRate){
+		var bullet = new Bullet(
+			this.refGame,															//refGame
+			this.refGame.player.sprite.x+this.refGame.player.sprite.width,			//X
+			this.refGame.player.sprite.y+this.refGame.player.sprite.height*0.5,		//Y
+			10,																		//DGT
+			2000
+			);																	//Velocity X
+		this.ammoRemaining--;
+		this.frameSinceShoot = 0;
+	}else if(this.clipsRemaining > 0 && this.ammoRemaining == 0 && this.isReloading == false){
+		this.isReloading = true;
+		this.frameReload = 0;
+	}
+};
+LongRangeWeapon.prototype.reload = function(){
+	if(this.clipsRemaining > 0){
+		this.isReloading = true;
+		this.frameReload = 0;
+	}
+};
+function Bullet(refGame, x, y, damage, velocityX){
+	this.refGame = refGame;
+
+	this.damage = damage;
+
+	this.sprite = refGame.bullets.create(x,y,"redBlock");
+
+	this.sprite.body.velocity.x = velocityX;
+
+	this.sprite.scale.x = 0.25;
+	this.sprite.scale.y = 0.25;
+
+	this.sprite.body.width /= 4;
+	this.sprite.body.height /= 4;
 };

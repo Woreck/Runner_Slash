@@ -1,2 +1,6 @@
 04/06/2014 - 04:38 - gamay : création d'un vrai GDD, elements du doc terminés : story, game flow macro et micro, capacité basiques du personnage.
                              J'suis mort maiss j'ai bien kiffé mettre ca en place, plus particulierement la story.
+
+05/06/2014 - 02:09 -gamay  : finition du gdd 1.0, demandez moi si je doit rajouter des choses mis a part les fiches persos ennemi et les stats des armes
+			     que je completer au fur et a mesure de l'anvancé du proto.Je suis content je vais pouvoir bosser sur la prog du jeu :) TIM
+                             J'ARRIIIIIIIIIIIIVE

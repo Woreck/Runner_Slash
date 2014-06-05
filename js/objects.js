@@ -197,26 +197,55 @@ function DisplayObject(x,y,text,style,key,game,callback,context){
 };
 DisplayObject.prototype.constructor = DisplayObject;
 
-
-
-function Hud(game){
+function Hud(refGame,lifeBarKey,lifeFillKey,ammoKey,actionButtonKey){
 	var that = this;
-	this.refGame = game;
-	this.fury = {
-		sprites: {
-			jauge: game.add.sprite(this.refGame.parameters.hud.jauge.x,this.refGame.parameters.hud.jauge.y,'jauge'),
-			remplissage: game.add.sprite(this.refGame.parameters.hud.remplissage.x,this.refGame.parameters.hud.remplissage.y,'remplissage'),
-		},
-		update: function(){
-			this.sprites.jauge.x = that.refGame.camera.x+50;
-			this.sprites.remplissage.x = that.refGame.camera.x+50;
-			this.sprites.remplissage.width = (this.sprites.jauge.width/100)*that.refGame.player.fury.amount;
-		}
+
+	this.refGame = refGame;
+
+
+	this.sprites = {
+		lifeBar: refGame.add.sprite(refGame.width*0.01,refGame.height*0.01,lifeBarKey),
+		lifeFill: refGame.add.sprite(refGame.width*0.01,refGame.height*0.01,lifeFillKey),
+		ammo: refGame.add.sprite(refGame.width*0.12, refGame.height*0.01,ammoKey)
 	};
+
+
+	this.sprites.lifeBar.fixedToCamera = true;
+	this.sprites.lifeBar.cameraOffset.x = this.sprites.lifeBar.x;
+
+	this.sprites.lifeFill.fixedToCamera = true;
+	this.sprites.lifeFill.cameraOffset.x = this.sprites.lifeFill.x;
+	this.sprites.lifeFill.width = this.sprites.lifeBar.width;
+	
+	this.sprites.ammo.fixedToCamera = true;
+	this.sprites.ammo.cameraOffset.x = this.sprites.lifeBar.cameraOffset.x + this.sprites.lifeBar.width + 20;
+
+	this.actionButton = refGame.add.button(0,0,actionButtonKey,function(){
+		var CloseCombat = false;
+		that.refGame.enemies.forEach(function(enemy){
+			if(enemy.x-that.refGame.player.sprite.x+that.refGame.player.sprite.width <= that.refGame.player.weaponCac.range){
+				CloseCombat = true;
+			}
+		});
+
+		if(CloseCombat){
+			that.refGame.player.weaponCac.use(that.refGame.player);
+		}
+		else{
+			that.refGame.player.weaponLongRange.shoot();
+		}
+	});
+
+	this.actionButton.fixedToCamera = true;
+	this.actionButton.cameraOffset.x = this.refGame.width*0.9;
+	this.actionButton.cameraOffset.y = 500;
+	this.actionButton.alpha = 0.3;
 };
-Hud.prototype.constructor = Hud;
-Hud.prototype.update = function(){
-	this.fury.update();
+Hud.prototype.updateLifeFill = function(amountToUpdate){
+	this.sprites.lifeFill.width -= amountToUpdate;
+	if(this.sprites.lifeFill.width < 0){
+		this.sprites.lifeFill.width = 0;
+	}
 };
 
 function CloseRangeWeapon(refGame, type, name, damage, speed, range){

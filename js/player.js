@@ -5,6 +5,7 @@ function Player(sprite, game){
   this.parameters = this.refGame.parameters.player;
   
   this.score = 0;
+  this.distanceParcourue = 0;
 
   //SPRITE\\
   this.sprite = sprite;
@@ -84,7 +85,8 @@ Player.prototype.constructor = Player;
 Fonction a éxécuter a 60FPS
 ***********************************************/
 Player.prototype.update = function update(direction){
-  
+  this.distanceParcourue += (this.sprite.body.x - this.sprite.body.preX)/100;
+  console.log(this.distanceParcourue)
   if(this.sprite.y < 0){
     this.sprite.body.velocity.y = -this.sprite.body.velocity.y;
     //RUSTINE By Timoté Guyot A l'AiZE

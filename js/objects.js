@@ -239,6 +239,7 @@ CloseRangeWeapon.prototype.use = function(player){
 		var rect = this.refGame.add.sprite(player.sprite.x+player.sprite.width,player.sprite.y,"redBlock");
 		rect.width = this.range;
 		rect.body.width = this.range;
+		rect.alpha = 0.4;
 
 		this.refGame.physics.overlap(rect,this.refGame.enemies,function(weapon,enemy){
 			enemy.refThis.addToScore();
@@ -319,4 +320,6 @@ function Bullet(refGame, x, y, damage, velocityX){
 
 	this.sprite.body.width /= 4;
 	this.sprite.body.height /= 4;
+
+	this.sprite.alpha = 0.8;
 };

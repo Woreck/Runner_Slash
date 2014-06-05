@@ -1,7 +1,7 @@
 /***********************************************
     PATTERN
 ***********************************************/
-function Pattern(map,width,height,tileWidth,tileHeight,type,difficulty,game,available){
+function Pattern(map,width,height,tileWidth,tileHeight,type,scoreNeeded,game,available){
     this.map = {
         array:map,                    //Tableau Numérique
         spriteArray:[],               //Tableau de sprite
@@ -13,7 +13,7 @@ function Pattern(map,width,height,tileWidth,tileHeight,type,difficulty,game,avai
         tileHeight:tileHeight         //Hauteur d'un tile en pixel
     };
     this.type = type;                     //Type de pattern ( enemies, holes, walls)
-    this.difficulty = difficulty;         //Difficulté estimée du pattern
+    this.scoreNeeded = scoreNeeded;         //Difficulté estimée du pattern
     this.available = available || false;  //Disponibibilité
     this.refGame = game;                  //Référence à game
     this.x = null;                        //Le worldX du pattern
@@ -90,27 +90,27 @@ ManagerPattern.prototype.chooseNextPattern = function(){
     if(random < 0.33){
         //WALLS
                 //list récupère l'ensemble des patterns disponible correspondant à la difficulté, dans la section walls
-        var list = this.dataBase.getByAvailability('walls',this.refGame.parameters.difficulty);
+        var list = this.dataBase.getByScore('walls',this.refGame.player.distanceParcourue);
                 //choose s'occupe de cloner un des patterns contenu dans la liste
-        var choose = this.dataBase.clone(list.walls[(Math.random()*list.length)|0]);
+        var choose = this.dataBase.clone(list[(Math.random()*list.length)|0]);
                 //On ajoute le pattern à la liste des patterns du monde
         this.addPattern(choose,this.patterns[0].x+this.patterns[0].map.widthPx);
     }
     else if( random < 0.66){
         //HOLES
                 //list récupère l'ensemble des patterns disponible correspondant à la difficulté, dans la section holes
-        var list = this.dataBase.getByAvailability('holes',this.refGame.parameters.difficulty);
+        var list = this.dataBase.getByScore('holes',this.refGame.player.distanceParcourue);
                 //choose s'occupe de cloner un des patterns contenu dans la liste
-        var choose = this.dataBase.clone(list.holes[(Math.random()*list.length)|0]);
+        var choose = this.dataBase.clone(list[(Math.random()*list.length)|0]);
                 //On ajoute le pattern à la liste des patterns du monde
         this.addPattern(choose,this.patterns[0].x+this.patterns[0].map.widthPx);
     }
     else{
         //ENEMIES
                 //list récupère l'ensemble des patterns disponible correspondant à la difficulté, dans la section enemies
-        var list = this.dataBase.getByAvailability('enemies',this.refGame.parameters.difficulty);
+        var list = this.dataBase.getByScore('enemies',this.refGame.player.distanceParcourue);
                 //choose s'occupe de cloner un des patterns contenu dans la liste
-        var choose = this.dataBase.clone(list.enemies[(Math.random()*list.length)|0]);
+        var choose = this.dataBase.clone(list[(Math.random()*list.length)|0]);
                 //On ajoute le pattern à la liste des patterns du monde
         this.addPattern(choose,this.patterns[0].x+this.patterns[0].map.widthPx);
     }
@@ -176,7 +176,7 @@ function DataBase(game){
                         0,0,0,0,0,1,0,0,0,0,0,0,0,
                         0,0,1,0,0,1,0,0,0,0,0,0,0,
                         1,1,1,1,1,0,0,0,0,1,1,1,1,
-                        1,1,1,1,1,0,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",1,game,true),
+                        1,1,1,1,1,0,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",100,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -186,7 +186,7 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,1,1,0,0,0,0,0,
                         1,1,1,0,0,0,0,0,0,0,0,1,1,
-                        1,1,1,0,0,0,0,0,0,0,0,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",1,game),
+                        1,1,1,0,0,0,0,0,0,0,0,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",100,game),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -196,7 +196,7 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         1,1,0,0,0,0,1,0,0,0,0,0,1,
-                        1,1,0,0,0,0,0,0,0,0,0,0,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",2,game,true),
+                        1,1,0,0,0,0,0,0,0,0,0,0,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",200,game,true),
         new Pattern([   0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -206,7 +206,7 @@ function DataBase(game){
                         0,0,0,0,0,1,1,0,1,1,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         1,1,0,0,1,0,0,1,0,0,1,0,1,
-                        1,1,0,0,0,0,0,0,0,0,0,0,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",2,game),
+                        1,1,0,0,0,0,0,0,0,0,0,0,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",200,game),
         ],
         /********************************************
         *                                           *
@@ -253,7 +253,7 @@ function DataBase(game){
                         0,0,0,1,1,0,0,0,1,0,0,0,0,
                         0,0,0,1,1,0,0,0,1,0,0,0,0,
                         1,1,1,1,1,0,0,1,1,1,1,1,1,
-                        1,1,1,1,1,0,0,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",1,game,true),
+                        1,1,1,1,1,0,0,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",100,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,1,1,1,1,1,1,1,1,1,
                         0,0,0,0,1,0,0,0,1,0,0,0,1,
@@ -263,7 +263,7 @@ function DataBase(game){
                         0,0,1,0,0,0,1,0,0,0,1,0,0,
                         0,0,1,0,0,0,1,0,0,0,1,0,0,
                         1,1,1,1,1,1,1,1,1,1,1,1,1,
-                        1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",1,game),
+                        1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",100,game),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,1,1,1,1,1,1,1,1,0,
                         0,0,0,0,1,1,1,1,1,1,1,1,0,
@@ -273,7 +273,7 @@ function DataBase(game){
                         0,0,0,0,1,1,1,1,1,1,1,1,0,
                         0,0,0,0,1,1,1,1,1,1,1,1,0,
                         1,1,1,1,1,1,1,1,1,1,1,1,1,
-                        1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",2,game,true),
+                        1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",200,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -283,7 +283,7 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         1,1,1,1,1,1,1,1,1,1,1,1,1,
-                        1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",2,game),
+                        1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"walls",200,game),
         ],
         /********************************************
         *                                           *
@@ -320,7 +320,7 @@ function DataBase(game){
                         0,0,0,0,0,1,0,0,0,0,0,0,0,
                         0,0,1,0,0,1,0,0,0,0,0,0,0,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,
-                        1,1,1,1,1,1,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",1,game,true),
+                        1,1,1,1,1,1,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",100,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -330,7 +330,7 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,2,0,0,0,0,
                         0,0,0,0,0,0,0,0,2,0,0,0,0,
                         1,1,1,1,1,1,0,0,1,1,1,1,1,
-                        1,1,1,1,1,1,0,0,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",1,game),
+                        1,1,1,1,1,1,0,0,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",100,game),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -340,7 +340,7 @@ function DataBase(game){
                         0,0,0,0,0,1,0,0,0,0,0,0,0,
                         0,0,1,0,0,1,0,0,0,0,0,0,0,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,
-                        1,1,1,1,1,1,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",2,game,true),
+                        1,1,1,1,1,1,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",200,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -350,17 +350,17 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         1,1,1,1,1,1,0,0,1,1,1,1,1,
-                        1,1,1,1,1,1,0,0,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",2,game),
+                        1,1,1,1,1,1,0,0,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",200,game),
         ],
     }
     console.log("DATABASE CREATED");
 }
 DataBase.prototype.constructor = DataBase;
-DataBase.prototype.getByDifficulty = function(type,difficulty){
+DataBase.prototype.getByScore = function(type,scoreNeeded){
     var object = [];
-    for(var i= 0; i < this[type].length; i++){
-        if(this[type][i].difficulty == difficulty){
-            object.push(this[type][i]);
+    for(var i= 0; i < this.base[type].length; i++){
+        if(this.base[type][i].scoreNeeded <= scoreNeeded){
+            object.push(this.base[type][i]);
         }
     }
     if(object.length > 0){
@@ -376,6 +376,7 @@ DataBase.prototype.getByAvailability = function(type,difficulty){
     var _type = type || null;
     var _difficulty = difficulty;
     var object = {};
+
     for(var prop in this.base){
         if(!_type){
             if(!_difficulty){

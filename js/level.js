@@ -50,6 +50,11 @@ Pattern.prototype.translateToSprite = function(_offsetX,_offsetY){
             this.map.spriteArray.push(new Coins(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
+        else if(this.map.array[i]==4){
+             //On interprète les 3 comme des pièces
+            this.map.spriteArray.push(new BlockBreakable(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
+            this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
+        }
     }
 }
 //Retourne la map au format numérique
@@ -149,14 +154,14 @@ function DataBase(game){
         *                                           *
         ********************************************/
         holes: [
-        new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+        new Pattern(    [0,0,0,0,1,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,1,0,0,0,0,0,0,0,
-                        0,0,1,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,0,0,4,0,0,0,0,0,0,0,
+                        0,0,0,0,0,4,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,0,0,0,0,0,0,0,
+                        0,0,1,1,1,1,0,0,0,0,0,0,0,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",0,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,

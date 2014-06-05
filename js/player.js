@@ -86,7 +86,6 @@ Fonction a éxécuter a 60FPS
 ***********************************************/
 Player.prototype.update = function update(direction){
   this.distanceParcourue += (this.sprite.body.x - this.sprite.body.preX)/100;
-  console.log(this.distanceParcourue)
   if(this.sprite.y < 0){
     this.sprite.body.velocity.y = -this.sprite.body.velocity.y;
     //RUSTINE By Timoté Guyot A l'AiZE

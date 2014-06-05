@@ -31,20 +31,13 @@ Block.prototype.kill = function(){
 	COINS
 ********************************************/
 function Coins(x,y,game,type){
-	
 	this.refGame = game;
-	
 	this.type = type || "1";
-	
-
 	this.sprite = this.refGame.coins.create(x,y,'coins'+this.type);
 	this.sprite.refThis = this;
-	
 	this.sprite.animations.add('turn', ['sprite1', 'sprite2', 'sprite3', 'sprite4', 'sprite5', 'sprite6', 'sprite7', 'sprite8']);
     this.sprite.animations.play('turn',15,true);
-    
     this.audio = this.refGame.add.audio('coins');
-	
 	this.points = parseInt(game.parameters.coins["type"+this.type].points);
 
 };
@@ -129,7 +122,19 @@ RedBlock.prototype.kill = function(){
 };
 
 
+/********************************************
+	BLOCK BREAKABLE
+********************************************/
+function BlockBreakable(x,y,refGame,type){
+	this.refGame= refGame;
+	this.sprite=refGame.blockBreakable.create(x,y,"blockBreakable");
+	this.sprite.refThis = this;
+	this.speed = 1;
+}
+BlockBreakable.prototype.kill = function(){
+	this.sprite.kill();
 
+};
 
 /********************************************
 	DOOR
@@ -147,9 +152,6 @@ Door.prototype.kill = function(){
 	this.sprite.kill();
 
 };
-
-
-
 /********************************************
 	TRIGGER DOOR
 ********************************************/
@@ -239,7 +241,6 @@ CloseRangeWeapon.prototype.use = function(player){
 		var rect = this.refGame.add.sprite(player.sprite.x+player.sprite.width,player.sprite.y,"redBlock");
 		rect.width = this.range;
 		rect.body.width = this.range;
-		rect.alpha = 0.4;
 
 		this.refGame.physics.overlap(rect,this.refGame.enemies,function(weapon,enemy){
 			enemy.refThis.addToScore();
@@ -320,6 +321,4 @@ function Bullet(refGame, x, y, damage, velocityX){
 
 	this.sprite.body.width /= 4;
 	this.sprite.body.height /= 4;
-
-	this.sprite.alpha = 0.8;
 };

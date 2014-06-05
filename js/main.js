@@ -14,6 +14,7 @@ window.onload = function() {
             this.game.load.atlas('coins1','assets/Coins.png','config/coin.json')
             //BLOCKS
             this.game.load.image('block1','assets/Bloc.png');
+            this.game.load.image('blockBreakable','assets/Destructible.png');
             //SKIES
             this.game.load.image('sky','assets/sky.png');
             //ENEMIES
@@ -135,6 +136,7 @@ window.onload = function() {
             this.game.enemies = this.game.add.group();
             this.game.coins = this.game.add.group();
             this.game.redBlock = this.game.add.group();
+            this.game.blockBreakable = this.game.add.group();
             this.game.doors = this.game.add.group();
             this.game.triggers = this.game.add.group();
             this.game.bullets = this.game.add.group();
@@ -184,7 +186,15 @@ window.onload = function() {
             /*********************************
                 PHYSIC
             *********************************/
-            //console.log(this.game.player.sprite.y)
+            if(!this.game.player.dash){
+                this.game.physics.collide(this.game.player.sprite, this.game.blockBreakable);
+            }
+            else{
+            //collision avec les breakable
+            this.game.physics.overlap(this.game.player.sprite, this.game.blockBreakable, function(player, blockBreakable){
+                        blockBreakable.refThis.kill();
+                });
+            }
             this.game.physics.collide(this.game.player.sprite, this.game.obstacles);
             this.game.physics.collide(this.game.player.sprite, this.game.enemies,function(player,enemy){
                 player.health -= 10;

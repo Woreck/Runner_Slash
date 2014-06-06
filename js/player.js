@@ -138,7 +138,7 @@ puis si celui ci trace un trait vers le haut
 *****************************************************/
 Player.prototype.checkJump = function checkJump(direction){
   if(this.jump.amount > 0){
-    if(this.checkInput(direction,"up") && this.jump.mouseReleased && direction.height < this.jump.parameters.heightToJump){
+    if(this.checkInput(direction,"up") && this.jump.mouseReleased && direction.height <= this.jump.parameters.heightToJump){
       this.jump.mouseReleased = false;
       this.jumping();
     }

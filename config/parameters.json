@@ -14,7 +14,7 @@
 		"jump":{
 			"earthQuakingVelocity":"1000",
 			"heightToEarthQuake":"150",
-			"heightToJump":"-50",
+			"heightToJump":"0",
 			"mouseReleased":"false",
 			"amount":"2",
 			"amountMax":"2",

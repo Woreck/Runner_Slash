@@ -24,7 +24,7 @@ function Player(sprite, game){
   
   this.sprite.outOfBoundsKill = true;
   
-
+  this.canDive=true;
   this.canSlash = true;
 
 
@@ -354,8 +354,9 @@ Permet de foncer vers le sol
 **************************************************/
 Player.prototype.earthQuaking = function(dir){
   if(dir){ 
-    if(dir.direction.down && dir.height > this.jump.parameters.heightToEarthQuake && !this.fury.activated){ 
+    if(dir.direction.down && dir.height > this.jump.parameters.heightToEarthQuake && !this.fury.activated&&this.canDive){ 
       this.sprite.body.velocity.y = this.jump.parameters.earthQuakingVelocity;
+      this.canDash=false;
     }
   }  
 };
@@ -390,6 +391,7 @@ Player.prototype.dashing = function(dir){
   if(dir && this.canDash && dir.width > this.parameters.dash.mouseWidthToDash && !this.fury.activated){
     if(dir.direction.right){
       this.dash = true;
+      this.canDive=false;
     }
   }
   
@@ -411,6 +413,7 @@ Player.prototype.dashing = function(dir){
       
       this.dash = false;
       this.canDash = false;
+      this.canDive=true;
       
       this.sprite.body.velocity.x = this.parameters.adjust.normal;
       this.sprite.body.gravity.y = this.parameters.gravity;

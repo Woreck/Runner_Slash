@@ -162,7 +162,14 @@ function Trigger(x,y,refGame){
 };
 Trigger.prototype.kill= function(){
 	
-	
+	for(var i=0; i< this.refGame.level.patterns[0].map.array.length;i++){
+		console.log('ca passeICI')
+		if(this.refGame.level.patterns[1].map.array[i]==6){
+		console.log('ca passe')
+			console.log(this.refGame.level.patterns[1].map.spriteArray["doors"]);
+		};
+	};
+
     this.sprite.kill();
 };
 

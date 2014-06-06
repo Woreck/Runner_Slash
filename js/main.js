@@ -15,9 +15,12 @@ window.onload = function() {
             //BLOCKS
             this.game.load.image('block1','assets/Bloc.png');
             this.game.load.image('blockBreakable','assets/Destructible.png');
+<<<<<<< HEAD
             //doors and trigger
             this.game.load.image('doors','assets/doors.png');
             this.game.load.image('switch','assets/switch.png');
+=======
+>>>>>>> b438ce8fabcad6dfd88f4d0cff3f8b23b409f262
             //SKIES
             this.game.load.image('sky','assets/sky.png');
             //ENEMIES

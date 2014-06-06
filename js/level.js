@@ -55,6 +55,7 @@ Pattern.prototype.translateToSprite = function(_offsetX,_offsetY){
             this.map.spriteArray.push(new BlockBreakable(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
+<<<<<<< HEAD
         else if(this.map.array[i]==5){
              //On interprète les 3 comme des pièces
             this.map.spriteArray.push(new Door(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
@@ -65,6 +66,8 @@ Pattern.prototype.translateToSprite = function(_offsetX,_offsetY){
             this.map.spriteArray.push(new Trigger(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
+=======
+>>>>>>> b438ce8fabcad6dfd88f4d0cff3f8b23b409f262
     }
 }
 //Retourne la map au format numérique

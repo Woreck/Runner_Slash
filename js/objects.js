@@ -31,20 +31,13 @@ Block.prototype.kill = function(){
 	COINS
 ********************************************/
 function Coins(x,y,game,type){
-	
 	this.refGame = game;
-	
 	this.type = type || "1";
-	
-
 	this.sprite = this.refGame.coins.create(x,y,'coins'+this.type);
 	this.sprite.refThis = this;
-	
 	this.sprite.animations.add('turn', ['sprite1', 'sprite2', 'sprite3', 'sprite4', 'sprite5', 'sprite6', 'sprite7', 'sprite8']);
     this.sprite.animations.play('turn',15,true);
-    
     this.audio = this.refGame.add.audio('coins');
-	
 	this.points = parseInt(game.parameters.coins["type"+this.type].points);
 
 };
@@ -129,41 +122,46 @@ RedBlock.prototype.kill = function(){
 };
 
 
-
+/********************************************
+	BLOCK BREAKABLE
+********************************************/
+function BlockBreakable(x,y,refGame,type){
+	this.refGame= refGame;
+	this.sprite=refGame.blockBreakable.create(x,y,"blockBreakable");
+	this.sprite.refThis = this;
+	this.speed = 1;
+}
+BlockBreakable.prototype.kill = function(){
+	this.sprite.kill();
+};
 
 /********************************************
 	DOOR
 ********************************************/
 function Door(x,y,refGame,id){
 	this.refGame = refGame;
-	this.sprite = refGame.doors.create(x,y,"redBlock");
+	this.sprite = refGame.doors.create(x,y,"doors");
 	this.sprite.scale.y = 2;
 	this.sprite.body.immovable = true;
 	this.sprite.refThis = this;
-	this.idNumber = id;
-	this.open = false;
+	
 };
 Door.prototype.kill = function(){
 	this.sprite.kill();
 
 };
-
-
-
 /********************************************
 	TRIGGER DOOR
 ********************************************/
-function Trigger(x,y,refGame,callback){
+function Trigger(x,y,refGame){
 	this.refGame = refGame;
-	this.sprite = refGame.triggers.create(x,y,"redBlock");
+	this.sprite = refGame.triggers.create(x,y,"switch");
 	this.sprite.body.immovable = true;
 	this.sprite.refThis = this;
-	this.callback = callback;
-	this.activated = false;
+	
 };
-Trigger.prototype.use = function(){
-	this.activated = !this.activated;
-	this.callback();
+Trigger.prototype.kill= function(){
+	this.sprite.kill()
 };
 
 
@@ -213,6 +211,7 @@ function Hud(game){
 			this.sprites.remplissage.width = (this.sprites.jauge.width/100)*that.refGame.player.fury.amount;
 		}
 	};
+	
 };
 Hud.prototype.constructor = Hud;
 Hud.prototype.update = function(){
@@ -239,7 +238,6 @@ CloseRangeWeapon.prototype.use = function(player){
 		var rect = this.refGame.add.sprite(player.sprite.x+player.sprite.width,player.sprite.y,"redBlock");
 		rect.width = this.range;
 		rect.body.width = this.range;
-		rect.alpha = 0.4;
 
 		this.refGame.physics.overlap(rect,this.refGame.enemies,function(weapon,enemy){
 			enemy.refThis.addToScore();
@@ -308,18 +306,11 @@ LongRangeWeapon.prototype.reload = function(){
 };
 function Bullet(refGame, x, y, damage, velocityX){
 	this.refGame = refGame;
-
 	this.damage = damage;
-
 	this.sprite = refGame.bullets.create(x,y,"redBlock");
-
 	this.sprite.body.velocity.x = velocityX;
-
 	this.sprite.scale.x = 0.25;
 	this.sprite.scale.y = 0.25;
-
 	this.sprite.body.width /= 4;
 	this.sprite.body.height /= 4;
-
-	this.sprite.alpha = 0.8;
 };

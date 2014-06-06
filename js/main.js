@@ -14,6 +14,10 @@ window.onload = function() {
             this.game.load.atlas('coins1','assets/Coins.png','config/coin.json')
             //BLOCKS
             this.game.load.image('block1','assets/Bloc.png');
+            this.game.load.image('blockBreakable','assets/Destructible.png');
+            //doors and trigger
+            this.game.load.image('doors','assets/doors.png');
+            this.game.load.image('switch','assets/switch.png');
             //SKIES
             this.game.load.image('sky','assets/sky.png');
             //ENEMIES
@@ -123,7 +127,7 @@ window.onload = function() {
             this.game.player = new Player(this.game.add.sprite(0,300,'player'),this.game);
             
             //HUD
-            this.game.hud = new Hud(this.game);
+            this.game.hud = new Hud(this.game,'jauge','remplissage','lol','redBlock');
             
             //CAMERA
             this.game.camera.bounds = null;
@@ -135,28 +139,12 @@ window.onload = function() {
             this.game.enemies = this.game.add.group();
             this.game.coins = this.game.add.group();
             this.game.redBlock = this.game.add.group();
+            this.game.blockBreakable = this.game.add.group();
             this.game.doors = this.game.add.group();
             this.game.triggers = this.game.add.group();
             this.game.bullets = this.game.add.group();
             
             this.game.level = new ManagerPattern(this.game);
-
-            this.game.buttonWeaponCac = game.add.button(0,0,"redBlock",function(){
-                that.game.player.weaponCac.use(that.game.player);
-            });
-            this.game.buttonWeaponCac.alpha = 0.5;
-
-            this.game.buttonWeaponCac.cameraOffset.x = this.game.width - this.game.buttonWeaponCac.width;
-            this.game.buttonWeaponCac.cameraOffset.y = 500;
-            this.game.buttonWeaponCac.fixedToCamera = true;
-            this.game.buttonWeaponLongRange = game.add.button(0,0,"redBlock",function(){
-                that.game.player.weaponLongRange.shoot();
-            });
-            this.game.buttonWeaponLongRange.alpha = 0.5;
-
-            this.game.buttonWeaponLongRange.cameraOffset.x = this.game.width - this.game.buttonWeaponLongRange.width;
-            this.game.buttonWeaponLongRange.cameraOffset.y = 500 - this.game.buttonWeaponLongRange.height;
-            this.game.buttonWeaponLongRange.fixedToCamera = true;
             //DONE
             console.log("CREATE RUN DONE");
         },
@@ -167,7 +155,6 @@ window.onload = function() {
             this.game.framer.check();
 
             this.game.parallax.update();
-            this.game.hud.update();
             
             var direction = whatHappenedWithYourMouse(this.game);
             
@@ -184,7 +171,15 @@ window.onload = function() {
             /*********************************
                 PHYSIC
             *********************************/
-            //console.log(this.game.player.sprite.y)
+            if(!this.game.player.dash){
+                this.game.physics.collide(this.game.player.sprite, this.game.blockBreakable);
+            }
+            else{
+            //collision avec les breakable
+            this.game.physics.overlap(this.game.player.sprite, this.game.blockBreakable, function(player, blockBreakable){
+                        blockBreakable.refThis.kill();
+                });
+            }
             this.game.physics.collide(this.game.player.sprite, this.game.obstacles);
             this.game.physics.collide(this.game.player.sprite, this.game.enemies,function(player,enemy){
                 player.health -= 10;
@@ -217,7 +212,7 @@ window.onload = function() {
                 this.game.camera.x += this.game.camera.speed*this.game.speed;
             }
             if(!this.game.player.sprite.inWorld || this.game.player.sprite.health <= 0){
-                this.game.buttonWeaponCac.fixedToCamera = false;
+                this.game.hud.actionButton.fixedToCamera = false;
                 this.game.state.start('death');
             }
             
@@ -250,7 +245,7 @@ window.onload = function() {
             this.game.input.mousePointer2.oldX = this.game.input.mousePointer2.pageX;
             this.game.input.mousePointer2.oldY = this.game.input.mousePointer2.pageY;
 
-            this.game.buttonWeaponCac.bringToTop();
+            this.game.hud.actionButton.bringToTop();
             //DONE
         },
     };

@@ -23,31 +23,48 @@ Pattern.prototype.constructor = Pattern;
 //Traduit le tableau numérique en tableau de sprite Phaser, dans this.spriteArray
 Pattern.prototype.translateToSprite = function(_offsetX,_offsetY){
     var offsetX = _offsetX || this.refGame.level.patterns[0].x + this.refGame.level.patterns[0].widthPx;
-        var offsetY = _offsetY || 0;
-        //Attribution des coordonées du groupe
+    var offsetY = _offsetY || 0;
+    
+    //Attribution des coordonées du groupe
     this.x = offsetX;
     this.y = offsetY;
-        //Début de l'interprétation du tableau numérique en tableau de sprite
+    
+    //Début de l'interprétation du tableau numérique en tableau de sprite
     for(var i = 0; i < this.map.array.length; i++){
-                //Récupération des coordonées X/Y de chaque case du tableau
+        //Récupération des coordonées X/Y de chaque case du tableau
         var x = i%this.map.width;
         var y = (i/this.map.width)|0;
+
         if(this.map.array[i] == 1){
-                        //On interprète les 1 comme des blocs
+            //On interprète les 1 comme des blocs
             this.map.spriteArray.push(new Block(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,"1"));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
-
         }
         else if(this.map.array[i] == 2){
-                        //On interprète les 2 comme des enemies
+            //On interprète les 2 comme des enemies
             this.map.spriteArray.push(new Enemies(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,"1"));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
-                else if(this.map.array[i] == 3){
-                        //On interprète les 3 comme des pièces
-                        this.map.spriteArray.push(new Coins(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
-                        this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
-                }
+        else if(this.map.array[i] == 3){
+            //On interprète les 3 comme des pièces
+            this.map.spriteArray.push(new Coins(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
+            this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
+        }
+        else if(this.map.array[i]==4){
+             //On interprète les 3 comme des pièces
+            this.map.spriteArray.push(new BlockBreakable(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
+            this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
+        }
+        else if(this.map.array[i]==5){
+             //On interprète les 3 comme des pièces
+            this.map.spriteArray.push(new Door(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
+            this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
+        }
+        else if(this.map.array[i]==6){
+             //On interprète les 3 comme des pièces
+            this.map.spriteArray.push(new Trigger(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
+            this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
+        }
     }
 }
 //Retourne la map au format numérique
@@ -142,29 +159,29 @@ function DataBase(game){
     this.refGame = game;
     this.base = {
         /********************************************
-        *                                           *
+        *                                           *   // ici ca sera mieux de les classer par difficulté
         *               HOLES                       *       
         *                                           *
         ********************************************/
         holes: [
-        new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+        new Pattern(    [0,0,0,0,0,1,0,0,0,0,0,0,0,
                         0,0,0,0,0,1,0,0,0,0,0,0,0,
-                        0,0,1,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,0,0,4,0,0,0,0,0,0,0,
+                        0,0,0,0,0,4,0,0,0,0,0,0,0,
+                        0,0,1,1,1,1,0,0,0,0,0,0,0,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",0,game,true),
-        new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+        new Pattern(    [0,0,0,0,0,0,0,1,0,0,0,0,0,
+                        0,0,0,0,0,0,0,1,0,0,0,0,0,
+                        0,0,0,0,0,0,0,1,0,0,0,0,0,
+                        0,0,0,0,0,0,0,1,0,0,0,0,0,
+                        0,0,0,0,0,0,0,1,0,0,0,0,0,
+                        0,0,0,0,0,0,0,1,0,0,0,0,0,
+                        0,0,0,0,0,0,0,5,0,0,0,0,0,
+                        0,0,0,6,0,0,0,5,0,0,0,0,0,
                         1,1,1,1,0,0,1,1,1,0,0,1,1,
                         1,1,1,1,0,0,1,1,1,0,0,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"holes",0,game),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -298,7 +315,7 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,2,0,0,0,2,0,0,0,
+                        0,1,0,0,0,2,0,0,0,2,0,0,0,
                         1,1,1,1,1,1,1,1,1,1,1,1,1,
                         1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",0,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -317,8 +334,8 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,2,0,0,0,0,0,0,0,
-                        0,0,0,0,0,1,0,0,0,0,0,0,0,
-                        0,0,1,0,0,1,0,0,0,0,0,0,0,
+                        0,0,0,1,1,1,0,0,0,0,0,0,0,
+                        0,0,1,1,1,1,0,0,0,0,0,0,2,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,
                         1,1,1,1,1,1,0,0,0,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",100,game,true),
         new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -348,9 +365,24 @@ function DataBase(game){
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,0,0,
-                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,2,0,0,2,0,0,0,0,
                         1,1,1,1,1,1,0,0,1,1,1,1,1,
                         1,1,1,1,1,1,0,0,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",200,game),
+        new Pattern(    [0,0,0,0,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,2,2,0,0,0,0,0,
+                        0,0,0,1,1,1,1,1,1,1,0,0,0,
+                        0,0,0,4,0,0,0,0,0,2,0,0,0,
+                        1,1,1,1,1,1,1,1,1,1,1,1,1,
+                        1,1,1,1,1,1,1,1,1,1,1,1,1,],WIDTH,HEIGHT,TILEWIDTH,TILEHEIGHT,"enemies1",200,game),
+        /********************************************
+        *                                           *
+        *               ALL                         *       
+        *                                           *
+        ********************************************/
         ],
     }
     console.log("DATABASE CREATED");

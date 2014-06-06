@@ -140,38 +140,38 @@ BlockBreakable.prototype.kill = function(){
 /********************************************
 	DOOR
 ********************************************/
-function Door(x,y,refGame,id){
+function Door(x,y,id,refGame){
 	this.refGame = refGame;
 	this.sprite = refGame.doors.create(x,y,"doors");
 	this.sprite.scale.y = 2;
 	this.sprite.body.immovable = true;
 	this.sprite.refThis = this;
 	this.type="doors"
+	this.id = id;
 	
 };
 Door.prototype.kill = function(){
 	this.sprite.kill();
-
 };
 /********************************************
 	TRIGGER DOOR
 ********************************************/
-function Trigger(x,y,refGame){
+function Trigger(x,y,id,refGame){
 	this.refGame = refGame;
 	this.sprite = refGame.triggers.create(x,y,"switch");
 	this.sprite.body.immovable = true;
 	this.sprite.refThis = this;
 	this.type= "trigger"
-	
+	this.id = id;
 };
 Trigger.prototype.kill= function(){
-	
-	for(var i=0; i< this.refGame.level.patterns[1].map.spriteArray.length;i++){
-		if(this.refGame.level.patterns[1].map.spriteArray[i].type=="doors"){
-			this.refGame.level.patterns[1].map.spriteArray[i].kill();
-		};
-	};
-
+	var that = this;
+	this.refGame.doors.forEachAlive(function(door){
+		console.log(that.id,door.refThis.id)
+		if(door.refThis.id == that.id){
+			door.refThis.kill();
+		}
+	});
     this.sprite.kill();
 };
 
@@ -211,7 +211,8 @@ function Hud(refGame,lifeBarKey,lifeFillKey,ammoKey,actionButtonKey){
 	this.sprites = {
 		lifeBar: refGame.add.sprite(refGame.width*0.01,refGame.height*0.01,lifeBarKey),
 		lifeFill: refGame.add.sprite(refGame.width*0.01,refGame.height*0.01,lifeFillKey),
-		ammo: refGame.add.sprite(refGame.width*0.12, refGame.height*0.01,ammoKey)
+		ammo: refGame.add.text(0,0,refGame.player.weaponLongRange.ammoRemaining),
+		meters: refGame.add.text(0,0,refGame.player.distanceParcourue)
 	};
 	this.sprites.lifeBar.fixedToCamera = true;
 	this.sprites.lifeBar.cameraOffset.x = this.sprites.lifeBar.x;
@@ -219,19 +220,21 @@ function Hud(refGame,lifeBarKey,lifeFillKey,ammoKey,actionButtonKey){
 	this.sprites.lifeFill.fixedToCamera = true;
 	this.sprites.lifeFill.cameraOffset.x = this.sprites.lifeFill.x;
 	this.sprites.lifeFill.width = this.sprites.lifeBar.width;
-	
-	this.sprites.ammo.fixedToCamera = true;
-	this.sprites.ammo.cameraOffset.x = this.sprites.lifeBar.cameraOffset.x + this.sprites.lifeBar.width + 20;
+
+	this.sprites.ammo.x = this.sprites.lifeBar.cameraOffset.x + this.sprites.lifeBar.width + 20+ refGame.camera.x;
+
+	this.sprites.meters.x = this.sprites.ammo.x + this.sprites.ammo.width + 20;
 
 	this.actionButton = refGame.add.button(0,0,actionButtonKey,function(){
 		var CloseCombat = false;
-		that.refGame.enemies.forEach(function(enemy){
-			if(enemy.x-that.refGame.player.sprite.x+that.refGame.player.sprite.width <= that.refGame.player.weaponCac.range){
+		that.refGame.enemies.forEachAlive(function(enemy){
+			console.log(Math.abs(enemy.x-that.refGame.player.sprite.x+that.refGame.player.sprite.width),that.refGame.player.weaponCac.range)
+			if(Math.abs(enemy.x-that.refGame.player.sprite.x+that.refGame.player.sprite.width) <= that.refGame.player.weaponCac.range){
 				CloseCombat = true;
 			}
 		});
 
-		if(CloseCombat){
+		if( CloseCombat || that.refGame.player.weaponLongRange.ammoRemaining == 0){
 			that.refGame.player.weaponCac.use(that.refGame.player);
 		}
 		else{
@@ -245,21 +248,38 @@ function Hud(refGame,lifeBarKey,lifeFillKey,ammoKey,actionButtonKey){
 	this.actionButton.alpha = 0.3;
 
 };
+Hud.prototype.updateMeters = function(){
+	this.sprites.meters.setText((this.refGame.player.distanceParcourue|0)+"m");
+};
+Hud.prototype.updateAmmo = function(){
+	this.sprites.ammo.setText(this.refGame.player.weaponLongRange.ammoRemaining);
+};
 Hud.prototype.updateLifeFill = function(amountToUpdate){
 	this.sprites.lifeFill.width -= amountToUpdate;
 	if(this.sprites.lifeFill.width < 0){
 		this.sprites.lifeFill.width = 0;
 	}
 };
+Hud.prototype.bringToTop = function(){
+	this.actionButton.bringToTop();
+	this.sprites.lifeBar.bringToTop();
+	this.sprites.lifeFill.bringToTop();
+};
+Hud.prototype.kill = function(){
+	this.actionButton.fixedToCamera = false;
+	this.sprites.lifeBar.fixedToCamera = false;
+	this.sprites.lifeFill.fixedToCamera = false;
+};
 
-function CloseRangeWeapon(refGame, type, name, damage, speed, range){
+function CloseRangeWeapon(refGame, key){
 	this.refGame = refGame;
-	this.type = type;
-	this.name = name;
+	this.parameters = this.refGame.parameters.weapons.closeRange[key];
+	this.type = this.parameters.type;
+	this.name = this.parameters.name;
 	
-	this.damage = damage;
-	this.speed = speed;
-	this.range = range;
+	this.damage = this.parameters.damage;
+	this.speed = this.parameters.speed;
+	this.range = this.parameters.range;
 	this.frameSinceUse = 0;
 };
 CloseRangeWeapon.prototype.update = function(){
@@ -272,6 +292,7 @@ CloseRangeWeapon.prototype.use = function(player){
 		var rect = this.refGame.add.sprite(player.sprite.x+player.sprite.width,player.sprite.y,"redBlock");
 		rect.width = this.range;
 		rect.body.width = this.range;
+		rect.alpha = 0.5;
 
 		this.refGame.physics.overlap(rect,this.refGame.enemies,function(weapon,enemy){
 			enemy.refThis.addToScore();
@@ -280,44 +301,25 @@ CloseRangeWeapon.prototype.use = function(player){
 	}
 };
 
-function LongRangeWeapon(refGame, type, name, damage, fireRate, range, amountOfClipsMax, ammoPerClips, reloadingSpeed){
+function LongRangeWeapon(refGame, key){
 	this.refGame = refGame;
-	this.type = type;
-	this.name = name;
+	this.parameters = this.refGame.parameters.weapons.longRange[key];
+	this.type = this.parameters.type;
+	this.name = this.parameters.name;
 	
-	this.damage = damage;
-	this.fireRate = fireRate;
-	this.range = range;
+	this.damage = this.parameters.damage;
+	this.fireRate = this.parameters.fireRate;
+	this.range = this.parameters.range;
 	
-	this.amountOfClipsMax = amountOfClipsMax;
-	this.clipsRemaining = amountOfClipsMax;
-	
-	this.ammoPerClips = ammoPerClips;
-	this.ammoRemaining = ammoPerClips;
-
-	this.reloadingSpeed = reloadingSpeed;
-	this.isReloading = false;
+	this.ammoRemaining = this.parameters.ammo;
 
 	this.frameSinceShoot = 0;
-	this.frameReload = 0;
-	
 };
 LongRangeWeapon.prototype.update = function(){
-	if(this.isReloading){
-		this.frameReload++;
-		if(this.frameReload >= this.reloadingSpeed){
-			this.ammoRemaining = this.ammoPerClips;
-			this.clipsRemaining--;
-			this.isReloading = false;
-		}
-	}
-	else{
-		this.frameSinceShoot++;
-	}
+	this.frameSinceShoot++;
 };
 LongRangeWeapon.prototype.shoot = function(){
-	console.log(this.ammoRemaining,this.clipsRemaining)
-	if(this.ammoRemaining > 0 && this.frameSinceShoot >= this.fireRate){
+	if(this.frameSinceShoot >= this.fireRate && this.ammoRemaining > 0){
 		var bullet = new Bullet(
 			this.refGame,															//refGame
 			this.refGame.player.sprite.x+this.refGame.player.sprite.width,			//X
@@ -327,15 +329,7 @@ LongRangeWeapon.prototype.shoot = function(){
 			);																	//Velocity X
 		this.ammoRemaining--;
 		this.frameSinceShoot = 0;
-	}else if(this.clipsRemaining > 0 && this.ammoRemaining == 0 && this.isReloading == false){
-		this.isReloading = true;
-		this.frameReload = 0;
-	}
-};
-LongRangeWeapon.prototype.reload = function(){
-	if(this.clipsRemaining > 0){
-		this.isReloading = true;
-		this.frameReload = 0;
+		this.refGame.hud.updateAmmo();
 	}
 };
 function Bullet(refGame, x, y, damage, velocityX){

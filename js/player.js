@@ -74,8 +74,9 @@ function Player(sprite, game){
   this.emitterParticles.makeParticles('star');
   this.emitterParticles.start(false, 1000,0.1);
 
-  this.weaponCac = new CloseRangeWeapon(game,"sword","testSword",10,10,200);
-  this.weaponLongRange = new LongRangeWeapon(game,"twin pistols", "testSword", 10, 10, 100, 10, 10, 120);
+  this.weaponCac = new CloseRangeWeapon(game,"sword");
+  console.log(this.weaponCac)
+  this.weaponLongRange = new LongRangeWeapon(game,"pistol");
 
 };
 Player.prototype.constructor = Player;
@@ -85,7 +86,7 @@ Player.prototype.constructor = Player;
 Fonction a éxécuter a 60FPS
 ***********************************************/
 Player.prototype.update = function update(direction){
-  this.distanceParcourue += (this.sprite.body.x - this.sprite.body.preX)/100;
+  this.distanceParcourue += ((this.sprite.body.x - this.sprite.body.preX)/100);
   if(this.sprite.y < 0){
     this.sprite.body.velocity.y = -this.sprite.body.velocity.y;
     //RUSTINE By Timoté Guyot A l'AiZE

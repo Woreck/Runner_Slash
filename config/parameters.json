@@ -70,5 +70,26 @@
 			"normal":"5",
 			"bulletTime":"2"
 		}
+	},
+	"weapons":{
+		"closeRange":{
+			"sword":{
+				"type": "Sword",
+				"name": "Short Sword",
+				"damage": "10",
+				"speed": "10",
+				"range": "200"
+			}
+		},
+		"longRange":{
+			"pistol":{
+				"type":"Pistol",
+				"name":"P-9mm",
+				"damage": "10",
+				"fireRate": "10",
+				"range": "300",
+				"ammo": "20" 
+			}
+		}
 	}
 }

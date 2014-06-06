@@ -128,15 +128,16 @@ window.onload = function() {
             //PLAYER
             this.game.player = new Player(this.game.add.sprite(0,300,'player'),this.game);
             
-            //HUD
-            this.game.hud = new Hud(this.game,'jauge','remplissage','lol','redBlock');
             
             //CAMERA
             this.game.camera.bounds = null;
             this.game.camera.x = this.game.player.sprite.x;
             this.game.camera.speed = this.game.parameters.camera.speed.normal;
             
-            //OBSTACLES/LEVEL
+            //HUD
+            this.game.hud = new Hud(this.game,'jauge','remplissage','lol','redBlock');
+            
+            //GROUPS
             this.game.obstacles = this.game.add.group();
             this.game.enemies = this.game.add.group();
             this.game.coins = this.game.add.group();
@@ -147,6 +148,7 @@ window.onload = function() {
             this.game.bullets = this.game.add.group();
             
             this.game.level = new ManagerPattern(this.game);
+
             //DONE
             console.log("CREATE RUN DONE");
         },
@@ -185,8 +187,7 @@ window.onload = function() {
             //collision avec intérupteur
             this.game.physics.overlap(this.game.player.sprite, this.game.triggers, function(player,triggers){
                         triggers.refThis.kill();
-                        
-                });
+            });
             
             //
 
@@ -218,7 +219,7 @@ window.onload = function() {
                 this.game.camera.x += this.game.camera.speed*this.game.speed;
             }
             if(!this.game.player.sprite.inWorld || this.game.player.sprite.health <= 0){
-                this.game.hud.actionButton.fixedToCamera = false;
+                this.game.hud.kill();
                 this.game.state.start('death');
             }
             
@@ -251,7 +252,10 @@ window.onload = function() {
             this.game.input.mousePointer2.oldX = this.game.input.mousePointer2.pageX;
             this.game.input.mousePointer2.oldY = this.game.input.mousePointer2.pageY;
 
-            this.game.hud.actionButton.bringToTop();
+            this.game.hud.sprites.ammo.x += this.game.camera.speed*this.game.speed;
+            this.game.hud.sprites.meters.x += this.game.camera.speed*this.game.speed;
+            this.game.hud.updateMeters();
+            this.game.hud.bringToTop();
             //DONE
         },
     };

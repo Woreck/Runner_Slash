@@ -24,6 +24,8 @@ Pattern.prototype.constructor = Pattern;
 Pattern.prototype.translateToSprite = function(_offsetX,_offsetY){
     var offsetX = _offsetX || this.refGame.level.patterns[0].x + this.refGame.level.patterns[0].widthPx;
     var offsetY = _offsetY || 0;
+
+    var triggerId = (_offsetX)|0;
     
     //Attribution des coordonées du groupe
     this.x = offsetX;
@@ -35,35 +37,34 @@ Pattern.prototype.translateToSprite = function(_offsetX,_offsetY){
         var x = i%this.map.width;
         var y = (i/this.map.width)|0;
 
-        if(this.map.array[i] == 1){
-            //On interprète les 1 comme des blocs
+        if ( this.map.array[i] === 1 ) {
+            //BLOCK
             this.map.spriteArray.push(new Block(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,"1"));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
-        else if(this.map.array[i] == 2){
-            //On interprète les 2 comme des enemies
+        else if ( this.map.array[i] === 2 ) {
+            //ENEMIES
             this.map.spriteArray.push(new Enemies(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,"1"));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
-        else if(this.map.array[i] == 3){
-            //On interprète les 3 comme des pièces
+        else if( this.map.array[i] === 3 ) {
+            //COINS
             this.map.spriteArray.push(new Coins(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
-        else if(this.map.array[i]==4){
-             //On interprète les 3 comme des pièces
+        else if ( this.map.array[i] === 4 ) {
+            //BREAKABLE BLOCK
             this.map.spriteArray.push(new BlockBreakable(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
-
-        else if(this.map.array[i]==5){
-             //On interprète les 3 comme des pièces
-            this.map.spriteArray.push(new Door(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
+        else if ( this.map.array[i] === 5 ) {
+            //DOORS
+            this.map.spriteArray.push(new Door(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,triggerId,this.refGame,'1'));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
-        else if(this.map.array[i]==6){
-             //On interprète les 3 comme des pièces
-            this.map.spriteArray.push(new Trigger(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,this.refGame,'1'));
+        else if ( this.map.array[i] === 6 ) {
+            //TRIGGERS
+            this.map.spriteArray.push(new Trigger(this.x+x*this.map.tileWidth,this.y+y*this.map.tileHeight,triggerId,this.refGame,'1'));
             this.map.spriteArray[this.map.spriteArray.length-1].sprite.body.immovable = true;
         }
 

@@ -15,12 +15,11 @@ window.onload = function() {
             //BLOCKS
             this.game.load.image('block1','assets/Bloc.png');
             this.game.load.image('blockBreakable','assets/Destructible.png');
-<<<<<<< HEAD
+
             //doors and trigger
             this.game.load.image('doors','assets/doors.png');
             this.game.load.image('switch','assets/switch.png');
-=======
->>>>>>> b438ce8fabcad6dfd88f4d0cff3f8b23b409f262
+
             //SKIES
             this.game.load.image('sky','assets/sky.png');
             //ENEMIES
@@ -183,6 +182,14 @@ window.onload = function() {
                         blockBreakable.refThis.kill();
                 });
             }
+            //collision avec intérupteur
+            this.game.physics.overlap(this.game.player.sprite, this.game.triggers, function(player,triggers){
+                        triggers.refThis.kill();
+                        
+                });
+            
+            //
+
             this.game.physics.collide(this.game.player.sprite, this.game.obstacles);
             this.game.physics.collide(this.game.player.sprite, this.game.enemies,function(player,enemy){
                 player.health -= 10;
@@ -195,10 +202,6 @@ window.onload = function() {
             });
             this.game.physics.collide(this.game.player.sprite,this.game.doors);
             this.game.physics.overlap(this.game.player.sprite,this.game.triggers,function(player,trigger){
-                if(!trigger.refThis.activated){
-                    trigger.refThis.use();
-                    player.body.velocity.x -= 3000;
-                };
             });
             if(this.game.bullets.length > 0){
                 this.game.physics.overlap(this.game.bullets, this.game.enemies,function(bullet,enemy){

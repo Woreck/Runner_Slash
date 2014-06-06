@@ -133,10 +133,6 @@ function BlockBreakable(x,y,refGame,type){
 }
 BlockBreakable.prototype.kill = function(){
 	this.sprite.kill();
-<<<<<<< HEAD
-=======
-
->>>>>>> b438ce8fabcad6dfd88f4d0cff3f8b23b409f262
 };
 
 /********************************************
@@ -165,7 +161,9 @@ function Trigger(x,y,refGame){
 	
 };
 Trigger.prototype.kill= function(){
-	this.sprite.kill()
+	
+	
+    this.sprite.kill();
 };
 
 
@@ -174,14 +172,10 @@ Trigger.prototype.kill= function(){
 	DISPLAY OBJECT
 ********************************************/
 function DisplayObject(x,y,text,style,key,game,callback,context){
-	
 	this.refGame = game;
-	
 	this.x = x;
 	this.y = y;
-	
 	this.text = text || "text";
-	
 	this.style = style || {fill:"#ffffff",font:"60px Arial",align:"center"};
 	this.display = this.refGame.add.text(this.x,this.y,this.text,this.style);
 	
@@ -210,11 +204,6 @@ function Hud(refGame,lifeBarKey,lifeFillKey,ammoKey,actionButtonKey){
 		lifeFill: refGame.add.sprite(refGame.width*0.01,refGame.height*0.01,lifeFillKey),
 		ammo: refGame.add.sprite(refGame.width*0.12, refGame.height*0.01,ammoKey)
 	};
-<<<<<<< HEAD
-	
-=======
-
-
 	this.sprites.lifeBar.fixedToCamera = true;
 	this.sprites.lifeBar.cameraOffset.x = this.sprites.lifeBar.x;
 
@@ -245,7 +234,7 @@ function Hud(refGame,lifeBarKey,lifeFillKey,ammoKey,actionButtonKey){
 	this.actionButton.cameraOffset.x = this.refGame.width*0.9;
 	this.actionButton.cameraOffset.y = 500;
 	this.actionButton.alpha = 0.3;
->>>>>>> b438ce8fabcad6dfd88f4d0cff3f8b23b409f262
+
 };
 Hud.prototype.updateLifeFill = function(amountToUpdate){
 	this.sprites.lifeFill.width -= amountToUpdate;

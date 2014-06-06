@@ -110,6 +110,7 @@ function RedBlock(x,y,refGame,type){
 	this.sprite = refGame.redBlock.create(x,y,"redBlock");
 	this.sprite.refThis = this;
 	this.speed = 1;
+	this.type="redBlock"
 };
 RedBlock.prototype.update = function(){
 	this.sprite.body.velocity.x -= 10*this.speed;
@@ -130,6 +131,7 @@ function BlockBreakable(x,y,refGame,type){
 	this.sprite=refGame.blockBreakable.create(x,y,"blockBreakable");
 	this.sprite.refThis = this;
 	this.speed = 1;
+	this.type="blockBreakable";
 }
 BlockBreakable.prototype.kill = function(){
 	this.sprite.kill();
@@ -144,6 +146,7 @@ function Door(x,y,refGame,id){
 	this.sprite.scale.y = 2;
 	this.sprite.body.immovable = true;
 	this.sprite.refThis = this;
+	this.type="doors"
 	
 };
 Door.prototype.kill = function(){
@@ -158,15 +161,14 @@ function Trigger(x,y,refGame){
 	this.sprite = refGame.triggers.create(x,y,"switch");
 	this.sprite.body.immovable = true;
 	this.sprite.refThis = this;
+	this.type= "trigger"
 	
 };
 Trigger.prototype.kill= function(){
 	
-	for(var i=0; i< this.refGame.level.patterns[0].map.array.length;i++){
-		console.log('ca passeICI')
-		if(this.refGame.level.patterns[1].map.array[i]==6){
-		console.log('ca passe')
-			console.log(this.refGame.level.patterns[1].map.spriteArray["doors"]);
+	for(var i=0; i< this.refGame.level.patterns[1].map.spriteArray.length;i++){
+		if(this.refGame.level.patterns[1].map.spriteArray[i].type=="doors"){
+			this.refGame.level.patterns[1].map.spriteArray[i].kill();
 		};
 	};
 

@@ -72,6 +72,7 @@
 		}
 	},
 	"weapons":{
+		"totaly":1,
 		"closeRange":{
 			"sword":{
 				"type": "Sword",

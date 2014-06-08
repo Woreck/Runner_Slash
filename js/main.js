@@ -433,10 +433,11 @@ window.onload = function() {
         },
         create: function(){
             this.parameters = httpGetData('config/parameters.json');
-            console.log(this.parameters)
+            console.log(this.parameters.weapons.totaly)
             this.buttons = [];
-            for (var i = 0; i < this.parameters.weapons.closeRange.length; i++) {            
+            for (var i = 0; i < this.parameters.weapons.totaly; i++) {            
                 this.buttons.push(this.game.add.button(200,i*100, 'button', switchToRun, this));
+
             }
                 
             for (var i = 0; i < this.buttons.length; i++) {

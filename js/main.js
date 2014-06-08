@@ -88,8 +88,8 @@ window.onload = function() {
 
             var that = this;
             
-            this.game.parameters = JSON.parse(this.game.cache.getText("parameters"));
-            readJson(this.game.parameters);
+            this.game.parameters = httpGetData('config/parameters.json');;
+            
         
             
 
@@ -294,6 +294,7 @@ window.onload = function() {
             this.buttons = [
                 this.game.add.button(200,100, 'button', switchToRun, this),
                 this.game.add.button(200,200, 'button', switchToOptions, this),
+                this.game.add.button(200,300, 'button', switchToChooseWeapon, this),
             ];            
             for (var i = 0; i < this.buttons.length; i++) {
                 this.buttons[i].x=this.game.width/2-this.buttons[i].width/2-i*-100
@@ -302,6 +303,7 @@ window.onload = function() {
                 game.add.tween(this.buttons[i].scale).to({x:1,y:1}, 500, Phaser.Easing.Bounce.Out,true,500*i);
             };
             //DONE
+            
             console.log("CREATE MENU DONE");
         },
         update: function(){
@@ -417,7 +419,39 @@ window.onload = function() {
         }
 
     };
+    /*
+  _____/ /_  ____  ____  ________     _      _____  ____ _____  ____  ____ 
+ / ___/ __ \/ __ \/ __ \/ ___/ _ \   | | /| / / _ \/ __ `/ __ \/ __ \/ __ \
+/ /__/ / / / /_/ / /_/ (__  )  __/   | |/ |/ /  __/ /_/ / /_/ / /_/ / / / /
+\___/_/ /_/\____/\____/____/\___/    |__/|__/\___/\__,_/ .___/\____/_/ /_/ 
+                                                      /_/                  */  
 
+    
+    this.chooseWeapon = {
+        preload: function(){
+             this.game.load.spritesheet('button','assets/Button.png',64,64);            
+        },
+        create: function(){
+            this.parameters = httpGetData('config/parameters.json');
+            console.log(this.parameters)
+            this.buttons = [];
+            for (var i = 0; i < this.parameters.weapons.closeRange.length; i++) {            
+                this.buttons.push(this.game.add.button(200,i*100, 'button', switchToRun, this));
+            }
+                
+            for (var i = 0; i < this.buttons.length; i++) {
+                this.buttons[i].x=this.game.width/2-this.buttons[i].width/2-i*-100
+                this.buttons[i].anchor={x:0.5,y:0.5};
+                this.buttons[i].scale={x:0,y:0};
+                game.add.tween(this.buttons[i].scale).to({x:1,y:1}, 500, Phaser.Easing.Bounce.Out,true,500*i);
+            };                    
+           
+        },
+        update: function(){
+
+        }
+
+    };
 /*----------------------------------------------------------
                                           _       _         
                                          ( )_  _ (_ )       
@@ -512,39 +546,41 @@ window.onload = function() {
     function switchToOptions(){
         this.game.state.start('options');
     }
-    function readJson(parameters){
-        for(var key in parameters){
-            if(typeof parameters[key] === "object"){
-                readJson(parameters[key]);
-            }
-            else if(typeof parameters[key] === "string"){
-                if(parameters[key] == "true"){
-                    parameters[key] = true;
-                }
-                else if(parameters[key] == "false"){
-                    parameters[key] = false;
-                }
-                else{
-                    var a = parseFloat(parameters[key]);
-                    if(!isNaN(a) && a.toString().indexOf('.') != -1){
-                        parameters[key] = a;
-                    }
-                    else{
-                        var b = parseInt(parameters[key]);
-                        if(!isNaN(b)){
-                            parameters[key] = b;
-                        }
-                    }
-                }
-            }
+    function switchToChooseWeapon(){
+        this.game.state.start('chooseWeapon');
+    }
+    function loadJSONFiles(files){
+        var jsonFiles = { };
+        for (fileName in files){
+            jsonFiles[fileName] = { 
+                fileName : files[fileName] , 
+                file: httpGetData(files[fileName]) 
+            };
         }
-    };
+        return jsonFiles;
+    }
+
+    // utility function for loading assets from server
+    function httpGet(theUrl) {
+        var xmlHttp = null;
+        xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false);
+        xmlHttp.send(null);
+        return xmlHttp.responseText;
+    }
+
+// utility function for loading json data from server
+    function httpGetData(theUrl) {
+        var responseText = httpGet(theUrl);
+        return JSON.parse(responseText);
+    }
 
     game.state.add("death", death);
     game.state.add('run', run);
     game.state.add('menu', menu);
     game.state.add('options', options);
     game.state.add('shop', shop);  
+    game.state.add('chooseWeapon', chooseWeapon);
     game.state.start('menu');
     //DONE
 };

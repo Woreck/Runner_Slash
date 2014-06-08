@@ -325,17 +325,18 @@ LongRangeWeapon.prototype.shoot = function(){
 			this.refGame.player.sprite.x+this.refGame.player.sprite.width,			//X
 			this.refGame.player.sprite.y+this.refGame.player.sprite.height*0.5,		//Y
 			10,																		//DGT
-			2000
-			);																	//Velocity X
+			2000,                                                                   //Velocity X
+			"redBlock"                                                              //skin
+			);																	
 		this.ammoRemaining--;
 		this.frameSinceShoot = 0;
 		this.refGame.hud.updateAmmo();
 	}
 };
-function Bullet(refGame, x, y, damage, velocityX){
+function Bullet(refGame, x, y, damage, velocityX, sprite){
 	this.refGame = refGame;
 	this.damage = damage;
-	this.sprite = refGame.bullets.create(x,y,"redBlock");
+	this.sprite = refGame.bullets.create(x,y,sprite);
 	this.sprite.body.velocity.x = velocityX;
 	this.sprite.scale.x = 0.25;
 	this.sprite.scale.y = 0.25;

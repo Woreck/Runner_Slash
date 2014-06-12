@@ -97,7 +97,8 @@ function ManagerPattern(game){
     this.dataBase = new DataBase(game);                                            //Base de donnée des patterns
     this.patterns = [];                                                            //Patterns actuellement dans le monde
     this.addPattern(this.dataBase.clone(this.dataBase.base.walls[0]),1000);        //Ajout de pattern à this.patterns
-        this.addPattern(this.dataBase.clone(this.dataBase.base.walls[0]),1832);        //Identique
+    this.addPattern(this.dataBase.clone(this.dataBase.base.walls[0]));        //Identique
+    this.addPattern(this.dataBase.clone(this.dataBase.base.walls[0]));        //Identique
 }
 ManagerPattern.prototype.constructor = ManagerPattern;
 //Fonction principal, à répéter à chaque frame (ex: dans une RAF )
@@ -114,7 +115,7 @@ ManagerPattern.prototype.chooseNextPattern = function(){
                 //choose s'occupe de cloner un des patterns contenu dans la liste
         var choose = this.dataBase.clone(list[(Math.random()*list.length)|0]);
                 //On ajoute le pattern à la liste des patterns du monde
-        this.addPattern(choose,this.patterns[0].x+this.patterns[0].map.widthPx);
+        this.addPattern(choose,this.patterns[this.patterns.length-1].x+this.patterns[this.patterns.length-1].map.widthPx);
     }
     else if( random < 0.66){
         //HOLES
@@ -123,7 +124,7 @@ ManagerPattern.prototype.chooseNextPattern = function(){
                 //choose s'occupe de cloner un des patterns contenu dans la liste
         var choose = this.dataBase.clone(list[(Math.random()*list.length)|0]);
                 //On ajoute le pattern à la liste des patterns du monde
-        this.addPattern(choose,this.patterns[0].x+this.patterns[0].map.widthPx);
+        this.addPattern(choose,this.patterns[this.patterns.length-1].x+this.patterns[this.patterns.length-1].map.widthPx);
     }
     else{
         //ENEMIES
@@ -132,7 +133,7 @@ ManagerPattern.prototype.chooseNextPattern = function(){
                 //choose s'occupe de cloner un des patterns contenu dans la liste
         var choose = this.dataBase.clone(list[(Math.random()*list.length)|0]);
                 //On ajoute le pattern à la liste des patterns du monde
-        this.addPattern(choose,this.patterns[0].x+this.patterns[0].map.widthPx);
+        this.addPattern(choose,this.patterns[this.patterns.length-1].x+this.patterns[this.patterns.length-1].map.widthPx);
     }
 }
 ManagerPattern.prototype.checkIsDone = function(){
@@ -147,7 +148,7 @@ ManagerPattern.prototype.checkIsDone = function(){
     }
 }
 ManagerPattern.prototype.addPattern = function(pattern, offset){
-    var _offset = offset || null;
+    var _offset = offset || this.patterns[this.patterns.length-1].x+this.patterns[this.patterns.length-1].map.widthPx;
     this.patterns.push(pattern);
     this.patterns[this.patterns.length-1].translateToSprite(_offset)
 }

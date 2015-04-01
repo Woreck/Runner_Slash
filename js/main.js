@@ -419,12 +419,13 @@ window.onload = function() {
         }
 
     };
-    /*
+/*--------------------------------------------------------------------------
   _____/ /_  ____  ____  ________     _      _____  ____ _____  ____  ____ 
  / ___/ __ \/ __ \/ __ \/ ___/ _ \   | | /| / / _ \/ __ `/ __ \/ __ \/ __ \
 / /__/ / / / /_/ / /_/ (__  )  __/   | |/ |/ /  __/ /_/ / /_/ / /_/ / / / /
 \___/_/ /_/\____/\____/____/\___/    |__/|__/\___/\__,_/ .___/\____/_/ /_/ 
-                                                      /_/                  */  
+                                                      /_/                  
+---------------------------------------------------------------------------*/  
 
     
     this.chooseWeapon = {
@@ -435,12 +436,12 @@ window.onload = function() {
             this.parameters = httpGetData('config/parameters.json');
             console.log(this.parameters.weapons.totaly)
             this.buttons = [];
-            for (var i = 0; i < this.parameters.weapons.totaly; i++) {            
+           //prend la totalité des armes et ajoute un bouttons pour chaques        
+            for (var i = 0; i < this.parameters.weapons.totaly; i++){
                 this.buttons.push(this.game.add.button(200,i*100, 'button', switchToRun, this));
-
             }
-                
-            for (var i = 0; i < this.buttons.length; i++) {
+            //je place les buttons en lignes (a changer pour l'alpha) ensuite je set un anchor au centre du button utils pour l'animation et je scale a 0 pour les animer esuites    
+            for (var i = 0; i < this.buttons.length; i++){
                 this.buttons[i].x=this.game.width/2-this.buttons[i].width/2-i*-100
                 this.buttons[i].anchor={x:0.5,y:0.5};
                 this.buttons[i].scale={x:0,y:0};

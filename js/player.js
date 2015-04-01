@@ -12,11 +12,13 @@ function Player(sprite, game){
 
   this.sprite.refThis = this;
   
-  this.sprite.animations.add('run', ['sprite1', 'sprite2', 'sprite3', 'sprite4', 'sprite5', 'sprite6', 'sprite7', 'sprite8', 'sprite9']);
-  this.sprite.animations.play('run',this.parameters.animations.frameRate.run||15,true);
-  
-  this.sprite.scale.x = 0.5;
-  this.sprite.scale.y = 0.5;
+  this.sprite.animations.add('run', ['s1', 's2',  's3', 's4', 's5', 's6', 's7','s8']);
+  this.sprite.animations.play('run',15,true);
+  this.sprite.anchor.x=0.5
+  this.sprite.anchor.y=0.5
+  this.sprite.scale={x:1,y:1};
+  console.log()
+ 
   
   this.sprite.x = 1000;
   
@@ -75,7 +77,7 @@ function Player(sprite, game){
   this.emitterParticles.start(false, 1000,0.1);
 
   this.weaponCac = new CloseRangeWeapon(game,"sword");
-  console.log(this.weaponCac)
+  
   this.weaponLongRange = new LongRangeWeapon(game,"pistol");
 
 };
